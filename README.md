@@ -1,4 +1,4 @@
-# Student Tools for Introduction to Computing
+# Student Tools for Beginning Python
 
 Python is an extremely popular language for introduction to computing courses at various 
 universities. However, many Python features require knowledge of advance language elements
