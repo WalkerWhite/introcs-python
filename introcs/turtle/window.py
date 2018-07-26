@@ -531,6 +531,7 @@ class Window(object):
         """
         with self._lock:
             if not tool._tkkey in self._drawtool:
+                self.tool._windpw = None  # Just to be sure
                 return
         
         self._queue_command(None,None,(0,0),self._tk_internal_remove_tool,[tool._tkkey],{'block':False})
@@ -544,6 +545,8 @@ class Window(object):
         :type tool:  ``_DrawTool``
         """
         with self._lock:
+            if not tool._tkkey in self._drawtool:
+                raise AttachmentError('This drawing tool is no longer attached to its window')
             steps = len(self._history[tool._tkkey])
         
         self._queue_command(None,None,(0,0),self._tk_internal_delete_history,[tool._tkkey,steps],{'block':False})
@@ -933,7 +936,7 @@ class Window(object):
             if self._clear:
                 import tkinter as tk
                 self._canvas.delete(tk.ALL)
-                for key in self._drawtool:
+                for key in tuple(self._drawtool.keys()):
                     self._tk_internal_remove_tool(key)
                 self._drawtool.clear()
                 self._history.clear()
@@ -961,13 +964,12 @@ class Window(object):
         """
         w = self._window.winfo_width()-self._canvas._dw
         h = self._window.winfo_height()-self._canvas._dh
-        dw = self._canvas._currw-self._canvas._lastw
-        dh = self._canvas._currh-self._canvas._lasth
         self._canvas._lastw = self._canvas._currw
         self._canvas._lasth = self._canvas._currh
         self._canvas._currw = w
         self._canvas._currh = h
-        
+        dw = self._canvas._currw-self._canvas._lastw
+        dh = self._canvas._currh-self._canvas._lasth
         self._canvas.config(width=w,height=h)
         if dw or dh:
             self._canvas.move('all',dw/2.0,dh/2.0)
@@ -986,7 +988,7 @@ class Window(object):
             
             # The garbage collector will cause a deadlock if we do not do this.
             gcblock = copy.copy(self._drawtool)
-            for key in self._drawtool:
+            for key in tuple(self._drawtool.keys()):
                 self._tk_internal_remove_tool(key)
             self._drawtool.clear()
             self._history.clear()
@@ -1131,9 +1133,10 @@ class Window(object):
             refs = self._drawtool[key]
             if refs[2]:
                 self._canvas.delete(refs[2])
-            res[0]._window = None
-            del self._drawtool[tool._tkkey]
-            del self._history[tool._tkkey]
+            refs[0]._window = None
+            del self._drawtool[key]
+            del self._history[key]
         except:
+            traceback.print_exc()
             pass
 

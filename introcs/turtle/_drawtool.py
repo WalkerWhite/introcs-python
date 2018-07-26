@@ -16,6 +16,7 @@ import traceback
 import random
 import math
 import time
+from .window import AttachmentError
 
 
 class Cursor(object):
@@ -379,6 +380,9 @@ class _DrawTool(object):
         :param show: Whether to update the orientation on the window.
         :type show:  ``float``
         """
+        if not self._window:
+            raise AttachmentError('This drawing tool is no longer attached to its window')
+        
         self._mark = True
         if not self._ORIENTS:
             return
@@ -438,6 +442,9 @@ class _DrawTool(object):
         :param show: Whether to update the cursor color on the window.
         :type show:  ``float``
         """
+        if not self._window:
+            raise AttachmentError('This drawing tool is no longer attached to its window')
+        
         self._odedge = self._edge
         self._edge = edge
         self._odfill = self._fill
@@ -466,6 +473,9 @@ class _DrawTool(object):
         :param value: The cursor visibility
         :type value:  ``bool``
         """
+        if not self._window:
+            raise AttachmentError('This drawing tool is no longer attached to its window')
+                
         self._odvisib = self._visible
         self._visible = value
         self._mark = True
@@ -492,6 +502,9 @@ class _DrawTool(object):
         """
         Forces a redraw of the associated Window.
         """
+        if not self._window:
+            raise AttachmentError('This drawing tool is no longer attached to its window')
+        
         # This was suppressed during speed 0
         if self._ORIENTS:
             self._cursor = self._image.read(self._heading)
