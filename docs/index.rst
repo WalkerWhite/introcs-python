@@ -1,5 +1,10 @@
-"""
-IntroCS modules
+.. introcs documentation master file, created by
+   sphinx-quickstart on Thu Jul 26 09:50:44 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+The ``introcs`` Package
+=======================
 
 The purpose of this package is to provide proper masking, giving instructors more 
 flexibility in how they arrange their Python course.  Masking takes a complex feature and 
@@ -12,19 +17,24 @@ text-manipulation functions when they are just starting out, without having to u
 the extra subtleties of method calls.  When they are ready to move on to method calls, the
 students are free (and encouraged) to stop using these functions.
 
-Key features include, but are not limited to
 
-* Method-free string functions
-* Simplified unit test utilities
-* Simplified web connections (similar to the classic `urllib2`)
-* Simplified color model interfaces
+Contents
+--------
+.. toctree::
+    :maxdepth: 1
+    :name: indextoc
+    
+    strings
+    tuples
+    colors
+    geometry
+    unittest
+    urltools
+    turtle
 
-:author:  Walker M. White (wmw2)
-:version: July 13, 2018
-"""
-from .geom import *
-from .colors import *
-from .strings import *
-from .tuples import *
-from .testcase import *
-from .urltools import *
+
+Indices and tables
+==================
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

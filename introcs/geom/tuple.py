@@ -1,11 +1,12 @@
 """
 The base tuple classes for points and vectors.
 
-Author: Walker M. White (wmw2)
-Date:   July 13, 2017 (Python 3 version)
+:author:  Walker M. White (wmw2)
+:version: July 13, 2018
 """
+from functools import total_ordering
 
-
+@total_ordering
 class Tuple2(object):
     """
     An instance is a tuple in 2D space.
@@ -25,13 +26,13 @@ class Tuple2(object):
         """
         The x coordinate
         
-        **invariant**: Value must be a float. If assigned an int, it will be typecast 
-        to a float (possibly raising a TypeError).
+        **Invariant**: Value must be an ``int`` or  ``float``.
         """
         return self._x
     
     @x.setter
     def x(self, value):
+        assert type(value) in [int,float]
         self._x = float(value)
     
     @property
@@ -39,13 +40,13 @@ class Tuple2(object):
         """
         The y coordinate
         
-        **invariant**: Value must be a float. If assigned an int, it will be typecast 
-        to a float (possibly raising a TypeError).
+        **Invariant**: Value must be an ``int`` or  ``float``.
         """
         return self._y
     
     @y.setter
     def y(self, value):
+        assert type(value) in [int,float]
         self._y = float(value)
     
     
@@ -113,32 +114,23 @@ class Tuple2(object):
         """
         return not self == other
     
-    def __cmp__(self,other):
+    def __lt__(self,other):
         """
-        Computes the lexicographic ordering of ``self`` and ``other``.
+        Compares the lexicographic ordering of ``self`` and ``other``.
         
-        If ``self`` and ``other`` are equal, this method returns 0.  Rememver that 
-        equality uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
-        
-        If they are not equal, this method returns a negative value if ``self`` < ``other``
-        and a positive one if ``self`` > ``other``
+        Lexicographic ordering checks the x-coordinate first, and then y.
         
         :param other: The object to check
         :type other:  ``type(self)``
         
-        :return: the lexicographic comparison of ``self`` and ``other``
+        :return: True if ``self`` is lexicographic kess than ``other``
         :rtype:  ``float``
         """
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
-        if self == other:
-            return 0
-        
         import numpy
-        if numpy.allclose([self.x],[other.x]):
-            return self.y - other.y
-        
-        return self.x - other.x
+        if self.x == other.x:
+            return self.y < other.y
+        return self.x < other.x
     
     def under(self,other):
         """
@@ -157,7 +149,7 @@ class Tuple2(object):
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
         return self.x <= other.x and self.y <= other.y
     
-    def over(self):
+    def over(self,other):
         """
         Compares ``self`` to ``other`` under the domination partial order
         
@@ -174,9 +166,9 @@ class Tuple2(object):
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
         return self.x >= other.x and self.y >= other.y
     
-    def __nonzero__(self):
+    def __bool__(self):
         """
-        Determines whether or not this object is 'close enough' to the origin.
+        Computes the boolean value of this tuple.
         
         This method uses ``numpy`` to test whether the coordinates are  "close enough".  
         It does not require exact equality for floats.
@@ -184,8 +176,7 @@ class Tuple2(object):
         :return: True if this object is 'close enough' to the origin; False otherwise
         :rtype:  ``bool``
         """
-        import numpy
-        return numpy.allclose([self.x,self.y],[0,0])
+        return not self.isZero()
     
     def isZero(self):
         """
@@ -202,6 +193,46 @@ class Tuple2(object):
     
     
     # ARITHMETIC
+    def __neg__(self):
+        """
+        Negates this tuple, producing a new object.
+        
+        The value returned has the same type as ``self`` (so if ``self`` is an instance
+        of a subclass, it uses that object instead of the original class. The contents of 
+        this object are not altered.
+        
+        :return: the negation of this tuple
+        :rtype:  ``type(self)``
+        """
+        result = self.copy()
+        result.x = -result.x
+        result.y = -result.y
+        return result
+    
+    def __pos__(self):
+        """
+        Positivizes this tuple, producing a new object.
+        
+        The value returned has the same type as ``self`` (so if ``self`` is an instance
+        of a subclass, it uses that object instead of the original class. The contents of 
+        this object are not altered.
+        
+        :return: a copy of this tuple
+        :rtype:  ``type(self)``
+        """
+        return self.copy()
+    
+    def __abs__(self): 
+        """
+        Creates a copy where each component of this tuple is its absolute value.
+        
+        :return: the absolute value of this tuple
+        :rtype:  ``type(self)``
+        """
+        self.x = abs(self.x)
+        self.y = abs(self.y)
+        return self
+    
     def __add__(self, other):
         """
         Adds the odject to another, producing a new object
@@ -287,6 +318,17 @@ class Tuple2(object):
         self.x *= scalar
         self.y *= scalar
     
+    def _imul_tuple_(self,object):
+        """
+        Multiplies this object by another Tuple in place
+        
+        :param object: the tuple multiply by
+        :type object:  ``type(self)``
+        """
+        assert isinstance(object,Tuple2), "%s is not a 2d tuple" % repr(object)
+        self.x *= object.x
+        self.y *= object.y
+    
     def _imul_matrix_(self,matrix):
         """
         Transforms this object by a matrix in place
@@ -295,6 +337,7 @@ class Tuple2(object):
         :type matrix:  :class:`Matrix`
         """
         from .matrix import Matrix
+        import numpy as np
         assert isinstance(matrix,Matrix), "%s is not a matrix" % repr(matrix)
         b = np.array([self.x,self.y,0,1], dtype=np.float32)
         tmp = np.dot(matrix._data,b)
@@ -303,10 +346,11 @@ class Tuple2(object):
     
     def __mul__(self, value):
         """
-        Multiples this object by either a scalar or a matrix, producing a new object.
+        Multiples this object by a scalar, ``Tuple2``, or a matrix, producing a new object.
         
         The exact effect is determined by the type of value. If ``value`` is a scalar, 
-        the result is strandard scalar multiplication.  If is a matrix, then we use the
+        the result is standard scalar multiplication.  If it is a 2d tuple, then the
+        result is pointwise multiplication. Finally, if is a matrix, then we use the
         matrix to transform the object.  We treat matrix transformation as multiplication
         orn the right to make in-place multiplication easier.
         
@@ -314,7 +358,7 @@ class Tuple2(object):
         of a subclass, it uses that object instead of the original class.
         
         :param value: value to multiply by
-        :type value:  ``int``, ``float``, or :class:`Matrix`
+        :type value:  ``int``, ``float``, :class:`Tuple2` or :class:`Matrix`
         
         :return: the altered object
         :rtype:  ``type(self)``
@@ -323,6 +367,8 @@ class Tuple2(object):
         result = self.copy()
         if type(value) in [int,float]:
             result._imul_scalar_(value)
+        elif isinstance(value,Tuple2):
+            result._imul_tuple_(value)
         elif isinstance(value,Matrix):
             result._imul_matrix_(value)
         else:
@@ -332,10 +378,11 @@ class Tuple2(object):
     
     def __imul__(self, value):
         """
-        Multiples this object by either a scalar or a matrix in place
+        Multiples this object by a scalar, Tuple2, or a matrix in place
         
         The exact effect is determined by the type of value. If ``value`` is a scalar, 
-        the result is strandard scalar multiplication.  If is a matrix, then we use the
+        the result is standard scalar multiplication.  If it is a 2d tuple, then the
+        result is pointwise multiplication. Finally, if is a matrix, then we use the
         matrix to transform the object.  We treat matrix transformation as multiplication
         orn the right to make in-place multiplication easier.
         
@@ -347,83 +394,130 @@ class Tuple2(object):
         
         :return: This object, newly modified
         """
+        from .matrix import Matrix
         if type(value) in [int,float]:
             self._imul_scalar_(value)
-        elif isinstance(value,GMatrix):
+        elif isinstance(value,Tuple2):
+            self._imul_tuple_(value)
+        elif isinstance(value,Matrix):
             self._imul_matrix_(value)
         else:
             assert False, "%s is not a valid value" % repr(value)
         
         return self
     
-    def __rmul__(self, scalar):
+    def __rmul__(self, value):
         """
-        Multiplies this object by a scalar on the left.
+        Multiplies this object by a scalar or ``Tuple2`` on the left.
         
-        We do not allow matrix multiplication on the left. The value returned has the same 
-        type as ``self`` (so if ``self`` is an instance of a subclass, it uses that object 
-        instead of the original class. The contents of this object are not altered.
+        The exact effect is determined by the type of value. If ``value`` is a scalar, 
+        the result is standard scalar multiplication.  If it is a 2d tuple, then the
+        result is pointwise multiplication. We do not allow matrix multiplication on 
+        the left. 
         
-        :param scalar: scalar to multiply by
-        :type scalar:  ``int`` or ``float``
+        The value returned has the same type as ``self`` (so if ``self`` is an instance 
+        of a subclass, it uses that object instead of the original class. The contents 
+        of this object are not altered.
+        
+        :param value: The value to multiply by
+        :type value:  ``int``, ``float``, or ``Tuple2``
         
         :return: the scalar multiple of ``self`` and ``scalar``
         :rtype:  ``type(self)``
         """
-        return self._mul_scalar_(scalar)
+        return self.__mul__(value)
     
-    def __truediv__(self, scalar):
+    def _idiv_scalar_(self,scalar):
         """
-        Divides this object by a scalar on the right, producting a new object.
+        Divides this object by a scalar in place
+        
+        :param scalar: scalar to multiply by
+        :type scalar:  ``int`` or ``float``
+        """
+        assert type(scalar) in [int,float], "%s is not a number" % repr(scalar)
+        self.x /= scalar
+        self.y /= scalar
+    
+    def _idiv_tuple_(self,object):
+        """
+        Divides this object by another tuple in place
+        
+        :param object: the tuple multiply by
+        :type object:  ``type(self)``
+        """
+        assert isinstance(object,Tuple2), "%s is not a 2d tuple" % repr(object)
+        self.x /= object.x
+        self.y /= object.y
+    
+    def __truediv__(self, value):
+        """
+        Divides this object by a scalar or a tuple on the right, producting a new object.
+        
+        The exact effect is determined by the type of value. If ``value`` is a scalar, 
+        the result is standard scalar division.  If it is a 2d tuple, then the
+        result is pointwise division.
         
         The value returned has the same type as ``self`` (so if ``self`` is an instance
         of a subclass, it uses that object instead of the original class. The contents of 
         this object are not altered.
         
-        :param scalar: scalar to multiply by
-        :type scalar:  ``int`` or ``float``
+        :param value: The value to multiply by
+        :type value:  ``int``, ``float``, or ``Tuple2``
         
-        :return: the scalar multiple of ``self`` and ``scalar``
+        :return: the division of ``self`` by ``value``
         :rtype:  ``type(self)``
         """
-        assert type(scalar) in [int,float], "%s is not a number" % repr(scalar)
         result = self.copy()
-        result.x /= scalar
-        result.y /= scalar
+        if type(value) in [int,float]:
+            result._idiv_scalar_(value)
+        elif isinstance(value,Tuple2):
+            result._idiv_tuple_(value)
+        else:
+            assert False, "%s is not a valid value" % repr(value)
+        
         return result
     
-    def __itruediv__(self, scalar):
+    def __itruediv__(self, value):
         """
-        Divides this object by a scalar on the right in place
-        
+        Divides this object by a scalar or a tuple on the right in place
+         
+        The exact effect is determined by the type of value. If ``value`` is a scalar, 
+        the result is standard scalar division.  If it is a 2d tuple, then the
+        result is pointwise division.
+       
         This method will modify the attributes of this oject.  This method returns this
         object for chaining.
         
-        :param scalar: scalar to multiply by
-        :type scalar:  ``int`` or ``float``
+        :param value: The value to multiply by
+        :type value:  ``int``, ``float``, or ``Tuple2``
         
         :return: This object, newly modified
         """
-        assert type(scalar) in [int,float], "%s is not a number" % repr(scalar)
-        self.x /= scalar
-        self.y /= scalar
+        if type(value) in [int,float]:
+            self._idiv_scalar_(value)
+        elif isinstance(value,Tuple2):
+            self._idiv_tuple_(value)
+        else:
+            assert False, "%s is not a valid value" % repr(value)
+        
         return self
     
-    def __rtruediv__(self, scalar):
+    def __rtruediv__(self, value):
         """
-        Divides this object by a scalar on the left.
+        Divides a scalar or tuple by this object.
         
-        We do not allow matrix multiplication on the left. The value returned has the same 
-        type as ``self`` (so if ``self`` is an instance of a subclass, it uses that object 
-        instead of the original class. The contents of this object are not altered.
+        Dividing by a tuple means pointwise reciprocation, followed by multiplication.
         
-        :param scalar: scalar to divide by
-        :type scalar:  ``int`` or ``float``
+        :param value: The value to divide
+        :type value:  ``int``, ``float``, or ``Tuple2``
         
-        :return: the scalar division of ``self`` and ``scalar``
+        :return: the division of ``value`` by ``self``
         :rtype:  ``type(self)``
         """
-        return self * scalar
+        result = self.copy()
+        result.x = 1/result.x
+        result.y = 1/result.y
+        return result * value
     
     # LINEAR ALGEBRA
     def interpolant(self, other, alpha):
@@ -495,18 +589,6 @@ class Tuple2(object):
         """
         return [self.x,self.y]
     
-    def abs(self): 
-        """
-        Sets each component of this tuple to its absolute value.
-        
-        This method returns this object for chaining.
-        
-        :return: This object, newly modified
-        """
-        self.x = abs(self.x)
-        self.y = abs(self.y)
-        return self
-    
     def clamp(self,low,high): 
         """
         Clamps this tuple to the range [``low``, ``high``].
@@ -523,6 +605,7 @@ class Tuple2(object):
         :type high:  ``int`` or ``float``
         
         :return: This object, newly modified
+        :rtype:  ``type(self)``
         """
         assert (type(low) in [int,float]), "%s is not a number" % repr(scalar)
         assert (type(high) in [int,float]), "%s is not a number" % repr(scalar)
@@ -531,7 +614,7 @@ class Tuple2(object):
         return self
 
 
-# #mark -
+@total_ordering
 class Tuple3(object):
     """
     An instance is a tuple in 3D space.
@@ -554,13 +637,13 @@ class Tuple3(object):
         """
         The x coordinate
         
-        **invariant**: Value must be a float. If assigned an int, it will be typecast 
-        to a float (possibly raising a TypeError).
+        **Invariant**: Value must be an ``int`` or  ``float``.
         """
         return self._x
     
     @x.setter
     def x(self, value):
+        assert type(value) in [int,float]
         self._x = float(value)
     
     @property
@@ -568,13 +651,13 @@ class Tuple3(object):
         """
         The y coordinate
         
-        **invariant**: Value must be a float. If assigned an int, it will be typecast 
-        to a float (possibly raising a TypeError).
+        **Invariant**: Value must be an ``int`` or  ``float``.
         """
         return self._y
     
     @y.setter
     def y(self, value):
+        assert type(value) in [int,float]
         self._y = float(value)
     
     @property
@@ -582,13 +665,13 @@ class Tuple3(object):
         """
         The z coordinate
         
-        **invariant**: Value must be a float. If assigned an int, it will be typecast 
-        to a float (possibly raising a TypeError).
+        **Invariant**: Value must be an ``int`` or  ``float``.
         """
         return self._z
     
     @z.setter
     def z(self, value):
+        assert type(value) in [int,float]
         self._z = float(value)
     
     
@@ -660,43 +743,26 @@ class Tuple3(object):
         """
         return not self == other
     
-    def __cmp__(self,other):
+    def __lt__(self,other):
         """
-        Computes the lexicographic ordering of ``self`` and ``other``.
+        Compares the lexicographic ordering of ``self`` and ``other``.
         
-        If ``self`` and ``other`` are equals, this method returns 0.  Rememver that 
-        equality uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
-        
-        If they are not equal, this method returns a negative value if ``self`` < ``other``
-        and a positive one if ``self`` > ``other``
+        Lexicographic ordering checks the x-coordinate first, and then y.
         
         :param other: The object to check
         :type other:  ``type(self)``
         
-        :return: the lexicographic comparison of ``self`` and ``other``
+        :return: True if ``self`` is lexicographic kess than ``other``
         :rtype:  ``float``
         """
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
-        if self == other:
-            return 0
-        
         import numpy
-        if numpy.allclose([self.x],[other.x]):
-            if numpy.allclose([self.x],[other.x]):
-                return self.z - other.z
-            
-            return self.y - other.y
-        
-        return self.x - other.x
-    
-    def __nonzero__(self):
-        """
-        :return: True if this object is 'close enough' to the origin, False otherwise
-        :rtype:  ``bool``
-        """
-        import numpy
-        return numpy.allclose([self.x,self.y,self.z],[0,0,0])
+        if self.x == other.x:
+            if self.y == other.y:
+                return self.z < other.z
+            else:
+                return self.y < other.y
+        return self.x < other.x
     
     def under(self,other):
         """
@@ -715,7 +781,7 @@ class Tuple3(object):
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
         return self.x <= other.x and self.y <= other.y and self.z <= other.z
     
-    def over(self):
+    def over(self,other):
         """
         Compares ``self`` to ``other`` under the domination partial order
         
@@ -732,8 +798,75 @@ class Tuple3(object):
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
         return self.x >= other.x and self.y >= other.y and self.z >= other.z
     
+    def __bool__(self):
+        """
+        Computes the boolean value of this tuple.
+        
+        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+        It does not require exact equality for floats.
+        
+        :return: True if this object is 'close enough' to the origin; False otherwise
+        :rtype:  ``bool``
+        """
+        return not self.isZero()
+    
+    def isZero(self):
+        """
+        Determines whether or not this object is 'close enough' to the origin.
+        
+        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+        It does not require exact equality for floats.
+        
+        :return: True if this object is 'close enough' to the origin; False otherwise
+        :rtype:  ``bool``
+        """
+        import numpy
+        return numpy.allclose([self.x,self.y,self.z],[0,0,0])
+    
     
     # ARITHMETIC
+    def __neg__(self):
+        """
+        Negates this tuple, producing a new object.
+        
+        The value returned has the same type as ``self`` (so if ``self`` is an instance
+        of a subclass, it uses that object instead of the original class. The contents of 
+        this object are not altered.
+        
+        :return: the negation of this tuple
+        :rtype:  ``type(self)``
+        """
+        result = self.copy()
+        result.x = -result.x
+        result.y = -result.y
+        result.z = -result.z
+        return result
+    
+    def __pos__(self):
+        """
+        Positivizes this tuple, producing a new object.
+        
+        The value returned has the same type as ``self`` (so if ``self`` is an instance
+        of a subclass, it uses that object instead of the original class. The contents of 
+        this object are not altered.
+        
+        :return: a copy of this tuple
+        :rtype:  ``type(self)``
+        """
+        return self.copy()
+    
+    def __abs__(self): 
+        """
+        Creates a copy where each component of this tuple is its absolute value.
+        
+        :return: the absolute value of this tuple
+        :rtype:  ``type(self)``
+        """
+        self.x = abs(self.x)
+        self.y = abs(self.y)
+        self.z = abs(self.z)
+        return self
+    
     def __add__(self, other):
         """
         Adds the odject to another, producing a new object
@@ -824,6 +957,18 @@ class Tuple3(object):
         self.y *= scalar
         self.z *= scalar
     
+    def _imul_tuple_(self,object):
+        """
+        Multiplies this object by another Tuple in place
+        
+        :param object: the tuple multiply by
+        :type object:  ``type(self)``
+        """
+        assert isinstance(object,Tuple3), "%s is not a 2d tuple" % repr(object)
+        self.x *= object.x
+        self.y *= object.y
+        self.z *= object.z
+    
     def _imul_matrix_(self,matrix):
         """
         Transforms this object by a matrix in place
@@ -832,6 +977,7 @@ class Tuple3(object):
         :type matrix:  :class:`Matrix`
         """
         from .matrix import Matrix
+        import numpy as np
         assert isinstance(matrix,Matrix), "%s is not a matrix" % repr(matrix)
         b = np.array([self.x,self.y,self.z,1], dtype=np.float32)
         tmp = np.dot(matrix._data,b)
@@ -841,10 +987,11 @@ class Tuple3(object):
     
     def __mul__(self, value):
         """
-        Multiples this object by either a scalar or a matrix, producing a new object.
+        Multiples this object by a scalar, Tuple3, or a matrix, producing a new object.
         
         The exact effect is determined by the type of value. If ``value`` is a scalar, 
-        the result is strandard scalar multiplication.  If is a matrix, then we use the
+        the result is standard scalar multiplication.  If it is a 3d tuple, then the
+        result is pointwise multiplication. Finally, if is a matrix, then we use the
         matrix to transform the object.  We treat matrix transformation as multiplication
         orn the right to make in-place multiplication easier.
         
@@ -852,7 +999,7 @@ class Tuple3(object):
         of a subclass, it uses that object instead of the original class.
         
         :param value: value to multiply by
-        :type value:  ``int``, ``float``, or :class:`Matrix`
+        :type value:  ``int``, ``float``, :class:`Tuple2` or :class:`Matrix`
         
         :return: the altered object
         :rtype:  ``type(self)``
@@ -861,6 +1008,8 @@ class Tuple3(object):
         result = self.copy()
         if type(value) in [int,float]:
             result._imul_scalar_(value)
+        elif isinstance(value,Tuple3):
+            result._imul_tuple_(value)
         elif isinstance(value,Matrix):
             result._imul_matrix_(value)
         else:
@@ -870,10 +1019,11 @@ class Tuple3(object):
     
     def __imul__(self, value):
         """
-        Multiples this object by either a scalar or a matrix in place
+        Multiples this object by a scalar, Tuple3, or a matrix in place
         
         The exact effect is determined by the type of value. If ``value`` is a scalar, 
-        the result is strandard scalar multiplication.  If is a matrix, then we use the
+        the result is standard scalar multiplication.  If it is a 3d tuple, then the
+        result is pointwise multiplication. Finally, if is a matrix, then we use the
         matrix to transform the object.  We treat matrix transformation as multiplication
         orn the right to make in-place multiplication easier.
         
@@ -885,85 +1035,133 @@ class Tuple3(object):
         
         :return: This object, newly modified
         """
+        from .matrix import Matrix
         if type(value) in [int,float]:
             self._imul_scalar_(value)
-        elif isinstance(value,GMatrix):
+        elif isinstance(value,Tuple3):
+            self._imul_tuple_(value)
+        elif isinstance(value,Matrix):
             self._imul_matrix_(value)
         else:
             assert False, "%s is not a valid value" % repr(value)
         
         return self
     
-    def __rmul__(self, scalar):
+    def __rmul__(self, value):
         """
-        Multiplies this object by a scalar on the left.
+        Multiplies this object by a scalar or Tuple3 on the left.
         
-        We do not allow matrix multiplication on the left. The value returned has the same 
-        type as ``self`` (so if ``self`` is an instance of a subclass, it uses that object 
-        instead of the original class. The contents of this object are not altered.
+        The exact effect is determined by the type of value. If ``value`` is a scalar, 
+        the result is standard scalar multiplication.  If it is a 3d tuple, then the
+        result is pointwise multiplication.  We do not allow matrix multiplication on 
+        the left. 
         
-        :param scalar: scalar to multiply by
-        :type scalar:  ``int`` or ``float``
-        
-        :return: the scalar multiple of ``self`` and ``scalar``
-        :rtype:  ``type(self)``
-        """
-        return self._mul_scalar_(scalar)
-    
-    def __truediv__(self, scalar):
-        """
-        Divides this object by a scalar on the right, producting a new object.
-        
-        The value returned has the same type as ``self`` (so if ``self`` is an instance
+        The value returned has the same type as ``self`` (so if ``self`` is an instance 
         of a subclass, it uses that object instead of the original class. The contents of 
         this object are not altered.
         
-        :param scalar: scalar to multiply by
-        :type scalar:  ``int`` or ``float``
+        :param value: The value to multiply by
+        :type value:  ``int``, ``float``, or ``Tuple3``
         
         :return: the scalar multiple of ``self`` and ``scalar``
         :rtype:  ``type(self)``
         """
-        assert type(scalar) in [int,float], "%s is not a number" % repr(scalar)
-        result = self.copy()
-        result.x /= scalar
-        result.y /= scalar
-        result.z /= scalar
-        return result
+        return self.__mul__(value)
     
-    def __itruediv__(self, scalar):
+    def _idiv_scalar_(self,scalar):
         """
-        Divides this object by a scalar on the right in place
-        
-        This method will modify the attributes of this oject.  This method returns this
-        object for chaining.
+        Divides this object by a scalar in place
         
         :param scalar: scalar to multiply by
         :type scalar:  ``int`` or ``float``
-        
-        :return: This object, newly modified
         """
         assert type(scalar) in [int,float], "%s is not a number" % repr(scalar)
         self.x /= scalar
         self.y /= scalar
         self.z /= scalar
-        return self
     
-    def __rtruediv__(self, scalar):
+    def _idiv_tuple_(self,object):
         """
-        Divides this object by a scalar on the left.
+        Divides this object by another tuple in place
         
-        We do not allow matrix multiplication on the left. The value returned has the same 
-        type as ``self`` (so if ``self`` is an instance of a subclass, it uses that object 
-        instead of the original class. The contents of this object are not altered.
+        :param object: the tuple multiply by
+        :type object:  ``type(self)``
+        """
+        assert isinstance(object,Tuple3), "%s is not a 2d tuple" % repr(object)
+        self.x /= object.x
+        self.y /= object.y
+        self.z /= object.z
+    
+    def __truediv__(self, value):
+        """
+        Divides this object by a scalar or a tuple on the right, producting a new object.
         
-        :param scalar: scalar to divide by
-        :type scalar:  ``int`` or ``float``
+        The exact effect is determined by the type of value. If ``value`` is a scalar, 
+        the result is standard scalar division.  If it is a 3d tuple, then the
+        result is pointwise division.
         
-        :return: the scalar division of ``self`` and ``scalar``
+        The value returned has the same type as ``self`` (so if ``self`` is an instance
+        of a subclass, it uses that object instead of the original class. The contents of 
+        this object are not altered.
+        
+        :param value: The value to multiply by
+        :type value:  ``int``, ``float``, or ``Tuple3``
+        
+        :return: the division of ``self`` by ``value``
         :rtype:  ``type(self)``
         """
-        return self * scalar
+        result = self.copy()
+        if type(value) in [int,float]:
+            result._idiv_scalar_(value)
+        elif isinstance(value,Tuple3):
+            result._idiv_tuple_(value)
+        else:
+            assert False, "%s is not a valid value" % repr(value)
+        
+        return result
+    
+    def __itruediv__(self, value):
+        """
+        Divides this object by a scalar or a tuple on the right in place
+         
+        The exact effect is determined by the type of value. If ``value`` is a scalar, 
+        the result is standard scalar division.  If it is a 2d tuple, then the
+        result is pointwise division.
+       
+        This method will modify the attributes of this oject.  This method returns this
+        object for chaining.
+        
+        :param value: The value to multiply by
+        :type value:  ``int``, ``float``, or ``Tuple2``
+        
+        :return: This object, newly modified
+        """
+        if type(value) in [int,float]:
+            self._idiv_scalar_(value)
+        elif isinstance(value,Tuple3):
+            self._idiv_tuple_(value)
+        else:
+            assert False, "%s is not a valid value" % repr(value)
+        
+        return self
+    
+    def __rtruediv__(self, value):
+        """
+        Divides a scalar or tuple by this object.
+        
+        Dividing by a tuple means pointwise reciprocation, followed by multiplication.
+        
+        :param value: The value to divide
+        :type value:  ``int``, ``float``, or ``Tuple3``
+        
+        :return: the division of ``value`` by ``self``
+        :rtype:  ``type(self)``
+        """
+        result = self.copy()
+        result.x = 1/result.x
+        result.y = 1/result.y
+        result.z = 1/result.z
+        return result * value
     
     # LINEAR ALGEBRA
     def interpolant(self, other, alpha):
@@ -1036,19 +1234,6 @@ class Tuple3(object):
         """
         return [self.x,self.y,self.z]
     
-    def abs(self): 
-        """
-        Sets each component of this tuple to its absolute value.
-        
-        This method returns this object for chaining.
-        
-        :return: This object, newly modified
-        """
-        self.x = abs(self.x)
-        self.y = abs(self.y)
-        self.z = abs(self.z)
-        return self
-    
     def clamp(self,low,high): 
         """
         Clamps this tuple to the range [``low``, ``high``].
@@ -1065,6 +1250,7 @@ class Tuple3(object):
         :type high:  ``int`` or ``float``
         
         :return: This object, newly modified
+        :rtype:  ``type(self)``
         """
         assert (type(low) in [int,float]), "%s is not a number" % repr(scalar)
         assert (type(high) in [int,float]), "%s is not a number" % repr(scalar)
@@ -1073,6 +1259,3 @@ class Tuple3(object):
         self.z = max(low,min(high,self.z))
         return self
 
-
-# Make 3-dimensions the default
-Tuple = Tuple3

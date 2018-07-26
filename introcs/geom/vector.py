@@ -4,18 +4,16 @@ Classes for representing vectors.
 Vectors have magnitude and direction, but they do not have position.  Use the point classes
 if you want position.
 
-Author: Walker M. White (wmw2)
-Date:   July 13, 2017 (Python 3 version)
+:author:  Walker M. White (wmw2)
+:version: July 13, 2018
 """
+# The docs at the bottom are to hide inheritance from the documentation
 from .tuple import Tuple2, Tuple3
 import math
 
 class Vector2(Tuple2):
     """
     An instance is a vector in 2D space.
-    
-    This class is a subclass of :class:``Tuple2`` and inherits all of its attributes and 
-    methods.
     
     :ivar x: The x-coordinate
     :vartype x: ``float``
@@ -27,17 +25,7 @@ class Vector2(Tuple2):
     # BUILT-IN METHODS
     def __init__(self, x=0, y=0):
         """
-        Creates a new Vector2 value (x,y).
-        
         All values are 0.0 by default.
-        
-        :return: a new Vector2 value (x,y).
-        
-        :param x: initial x value
-        :type x:  ``int`` or ``float``
-            
-        :param y: initial y value
-        :type y:  ``int`` or ``float``
         """
         Tuple2.__init__(self,x,y)
     
@@ -73,7 +61,7 @@ class Vector2(Tuple2):
         result.y += other.y
         return result
     
-    def __sub__(self, tail):
+    def __sub__(self, other):
         """
         Performs a context dependent subtraction of this vector and ``other``.
         
@@ -184,12 +172,14 @@ class Vector2(Tuple2):
         """
         assert (isinstance(other, Vector2)), "%s is not a valid vector" % repr(other)
         import math
+        na = self.length()
+        nb = other.length()
         
         if na*nb == 0:
             return 0
         return math.acos(self.dot(other)/(na*nb))
     
-    def rotate(angle):
+    def rotate(self,angle):
         """
         Rotates this vector by the angle (in radians) around the origin in place
         
@@ -205,13 +195,15 @@ class Vector2(Tuple2):
         :return: This object, newly modified
         """
         assert type(angle) in [int,float], "%s is not a number" % repr(angle)
-        ca = math.cos(a)
-        cb = math.sin(a)
-        self.x = self.x*ca - self.y*cb
-        self.y = self.x*cb + self.y*ca
+        ca = math.cos(angle)
+        cb = math.sin(angle)
+        x = self.x*ca - self.y*cb
+        y = self.x*cb + self.y*ca
+        self.x = x
+        self.y = y
         return self
     
-    def rotation(angle):
+    def rotation(self,angle):
         """
         Rotates this vector by the angle (in radians) around the origin, producing a new object
         
@@ -229,8 +221,8 @@ class Vector2(Tuple2):
         :rtype:  ``type(self)``
         """
         assert type(angle) in [int,float], "%s is not a number" % repr(angle)
-        ca = math.cos(a)
-        cb = math.sin(a)
+        ca = math.cos(angle)
+        cb = math.sin(angle)
         result = self.copy()
         result.x = self.x*ca - self.y*cb
         result.y = self.x*cb + self.y*ca
@@ -305,9 +297,11 @@ class Vector2(Tuple2):
         :return: This object, newly modified
         """
         assert (isinstance(other, Vector2)), "%s is not a valid vector" % repr(other)
-        dot  = self.dot(other)
-        base = other.length2()
-        self *= (dot/base)
+        dot   = self.dot(other)
+        base  = other.length2()
+        other = other*(dot/base)
+        self.x = other.x
+        self.y = other.y
         return self
     
     def projection(self,other):
@@ -334,28 +328,12 @@ class Vector2(Tuple2):
 class Vector3(Tuple3):
     """
     An instance is a vector in 3D space.
-    
-    This class is a subclass of :class:``Tuple2`` and inherits all of its attributes and 
-    methods.
-    
-    :ivar x: The x-coordinate
-    :vartype x: ``float``
-    
-    :ivar y: The y-coordinate
-    :vartype y: ``float``
-    
-    :ivar z: The z-coordinate
-    :vartype z: ``float``
     """
     
     # BUILT-IN METHODS
     def __init__(self, x=0, y=0, z=0):
         """
-        Creates a new Vector3 value (x,y).
-        
         All values are 0.0 by default.
-        
-        :return: a new Vector3 value (x,y).
         
         :param x: initial x value
         :type x:  ``int`` or ``float``
@@ -402,7 +380,7 @@ class Vector3(Tuple3):
         result.z += other.z
         return result
     
-    def __sub__(self, tail):
+    def __sub__(self, other):
         """
         Performs a context dependent subtraction of this vector and ``other``.
         
@@ -571,9 +549,12 @@ class Vector3(Tuple3):
         :return: This object, newly modified
         """
         assert (isinstance(other, Vector3)), "%s is not a valid vector" % repr(other)
-        self.x = (self.y * other.z) - (self.z * other.y)
-        self.y = (self.z * other.x) - (self.x * other.z)
-        self.z = (self.x * other.y) - (self.y * other.x)
+        x = (self.y * other.z) - (self.z * other.y)
+        y = (self.z * other.x) - (self.x * other.z)
+        z = (self.x * other.y) - (self.y * other.x)
+        self.x = x
+        self.y = y
+        self.z = z
         return self
     
     def project(self,other):
@@ -589,9 +570,12 @@ class Vector3(Tuple3):
         :return: This object, newly modified
         """
         assert (isinstance(other, Vector3)), "%s is not a valid vector" % repr(other)
-        dot  = self.dot(other)
-        base = other.length2()
-        self *= (dot/base)
+        dot   = self.dot(other)
+        base  = other.length2()
+        other = other*(dot/base)
+        self.x = other.x
+        self.y = other.y
+        self.z = other.z
         return self
     
     def projection(self,other):
@@ -616,3 +600,447 @@ class Vector3(Tuple3):
 
 # Make 3-dimensions the default
 Vector = Vector3
+
+# #mark -
+# #mark Vector2 docs
+Vector2.__eq__.__doc__ = """
+    Compares this point with ``other`` 
+    
+    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+    It does not require exact equality for floats.  Equivalence also requires type
+    equivalence.
+    
+    :param other: The object to check
+    :type other:  ``any``
+    
+    :return: True if ``self`` and ``other`` are equivalent
+    :rtype:  ``bool``
+    """
+
+Vector2.__ne__.__doc__ = """
+    Compares this object with ``other`` 
+    
+    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+    It does not require exact equality for floats.
+    
+    :param other: The object to check
+    :type other:  ``any``
+    
+    :return: False if ``self`` and ``other`` are equivalent objects. 
+    :rtype:  ``bool``
+    """
+
+Vector2.__lt__.__doc__ = """
+    Compares the lexicographic ordering of ``self`` and ``other``.
+    
+    Lexicographic ordering checks the x-coordinate first, and then y.
+    
+    :param other: The object to check
+    :type other:  ``Vector2``
+    
+    :return: True if ``self`` is lexicographic kess than ``other``
+    :rtype:  ``float``
+    """
+
+Vector2.__neg__.__doc__ = """
+    Negates this point, producing a new object.
+    
+    :return: the negation of this tuple
+    :rtype:  ``Vector2``
+    """
+
+Vector2.__abs__.__doc__ = """
+    Creates a copy where each component of this tuple is its absolute value.
+    
+    :return: the absolute value of this tuple
+    :rtype:  ``Vector2``
+    """
+
+Vector2.__mul__.__doc__ = """
+    Multiples this object by a scalar, ``Vector2``, or a ``Matrix``, producing a new object.
+    
+    The exact effect is determined by the type of value. If ``value`` is a scalar, 
+    the result is standard scalar multiplication.  If it is a point, then the
+    result is pointwise multiplication. Finally, if is a matrix, then we use the
+    matrix to transform the object.  We treat matrix transformation as multiplication
+    on the right to make in-place multiplication easier.  See :class:`Matrix` doe more
+    
+    :param value: value to multiply by
+    :type value:  ``int``, ``float``, ``Vector2`` or ``Matrix``
+    
+    :return: the altered object
+    :rtype:  ``Vector2``
+    """
+
+Vector2.__rmul__.__doc__ = """
+    Multiplies this object by a scalar or ``Vector2`` on the left.
+    
+    The exact effect is determined by the type of value. If ``value`` is a scalar, 
+    the result is standard scalar multiplication.  If it is a 2d tuple, then the
+    result is pointwise multiplication. We do not allow matrix multiplication on 
+    the left. 
+    
+    :param value: The value to multiply by
+    :type value:  ``int``, ``float``, or ``Vector2``
+    
+    :return: the scalar multiple of ``self`` and ``scalar``
+    :rtype:  ``Vector2``
+    """
+
+Vector2.__truediv__.__doc__ = """
+    Divides this object by a scalar or a ``Vector2`` on the right, producting a new object.
+    
+    The exact effect is determined by the type of value. If ``value`` is a scalar, 
+    the result is standard scalar division.  If it is a ``Vector2``, then the
+    result is pointwise division.
+    
+    The value returned has the same type as ``self`` (so if ``self`` is an instance
+    of a subclass, it uses that object instead of the original class. The contents of 
+    this object are not altered.
+    
+    :param value: The value to multiply by
+    :type value:  ``int``, ``float``, or ``Vector2``
+    
+    :return: the division of ``self`` by ``value``
+    :rtype:  ``Vector2``
+    """
+
+Vector2.__rtruediv__.__doc__ = """
+    Divides a scalar or ``Vector2`` by this object.
+    
+    Dividing by a point means pointwise reciprocation, followed by multiplication.
+    
+    :param value: The value to divide
+    :type value:  ``int``, ``float``, or ``Vector2``
+    
+    :return: the division of ``value`` by ``self``
+    :rtype: 
+    """
+    
+Vector2.under.__doc__ = """
+    Compares ``self`` to ``other`` under the domination partial order
+    
+    We say that one point dominates  another is all components of the first are greater 
+    than or equal to the components of the second.  This is a partial order, not a total 
+    one.
+    
+    :param other: The object to check
+    :type other:  ``Vector2``
+    
+    :return: True if ``other`` dominates ``self``; False otherwise
+    :rtype:  ``bool``
+    """
+
+Vector2.over.__doc__ = """
+    Compares ``self`` to ``other`` under the domination partial order
+    
+    We say that one point dominates  another is all components of the 
+    first are greater than or equal to the components of the second.  This is a
+    partial order, not a total one.
+    
+    :param other: The object to check
+    :type other:  ``Vector2``
+    
+    :return: True if ``self`` dominates ``other``; False otherwise
+    :rtype:  ``bool``
+    """
+
+Vector2.isZero.__doc__ = """
+    Determines whether or not this object is 'close enough' to the origin.
+    
+    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+    It does not require exact equality for floats.
+    
+    :return: True if this object is 'close enough' to the origin; False otherwise
+    :rtype:  ``bool``
+    """
+
+Vector2.interpolant.__doc__ = """
+    Interpolates this object with another, producing a new object
+    
+    The resulting value is::
+        
+        alpha*self+(1-alpha)*other 
+    
+    according to the rules of addition and scalar multiplication.
+    
+    :param other: object to interpolate with
+    :type other:  ``Vector2``
+    
+    :param alpha: scalar to interpolate by
+    :type alpha:  ``int`` or ``float``
+    
+    :return: the interpolation of this object and ``other`` via ``alpha``.
+    :rtype:  ``Vector2``
+    """
+
+Vector2.interpolate.__doc__ = """
+    Interpolates this object with another in place
+    
+    This method will modify the attributes of this oject.  The new attributes will
+    be equivalent to::
+        
+        alpha*self+(1-alpha)*other 
+    
+    according to the rules of addition and scalar multiplication.
+    
+    This method returns this object for chaining.
+    
+    :param other: object to interpolate with
+    :type other:  ``Vector2``
+    
+    :param alpha: scalar to interpolate by
+    :type alpha:  ``int`` or ``float``
+    
+    :return: This object, newly modified
+    """
+
+Vector2.copy.__doc__ = """
+    :return: A copy of this point
+    :rtype:  ``Vector2``
+    """
+
+Vector2.list.__doc__ = """
+    :return: A python list with the contents of this point.
+    :rtype:  ``list``
+    """
+
+Vector2.clamp.__doc__ = """
+    Clamps this point to the range [``low``, ``high``].
+    
+    Any value in this tuple less than ``low`` is set to ``low``.  Any value greater 
+    than ``high`` is set to ``high``.
+    
+    This method returns this object for chaining.
+    
+    :param low: The low range of the clamp
+    :type low:  ``int`` or ``float``
+    
+    :param high: The high range of the clamp
+    :type high:  ``int`` or ``float``
+    
+    :return: This object, newly modified
+    :rtype:  ``Vector2``
+    """
+
+# #mark -
+# #mark Vector3 docs
+Vector3.__eq__.__doc__ = """
+    Compares this point with ``other`` 
+    
+    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+    It does not require exact equality for floats.  Equivalence also requires type
+    equivalence.
+    
+    :param other: The object to check
+    :type other:  ``any``
+    
+    :return: True if ``self`` and ``other`` are equivalent
+    :rtype:  ``bool``
+    """
+
+Vector3.__ne__.__doc__ = """
+    Compares this object with ``other`` 
+    
+    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+    It does not require exact equality for floats.
+    
+    :param other: The object to check
+    :type other:  ``any``
+    
+    :return: False if ``self`` and ``other`` are equivalent objects. 
+    :rtype:  ``bool``
+    """
+
+Vector3.__lt__.__doc__ = """
+    Compares the lexicographic ordering of ``self`` and ``other``.
+    
+    Lexicographic ordering checks the x-coordinate first, and then y.
+    
+    :param other: The object to check
+    :type other:  ``Vector3``
+    
+    :return: True if ``self`` is lexicographic kess than ``other``
+    :rtype:  ``float``
+    """
+
+Vector3.__neg__.__doc__ = """
+    Negates this point, producing a new object.
+    
+    :return: the negation of this tuple
+    :rtype:  ``Vector3``
+    """
+
+Vector3.__abs__.__doc__ = """
+    Creates a copy where each component of this tuple is its absolute value.
+    
+    :return: the absolute value of this tuple
+    :rtype:  ``Vector3``
+    """
+
+Vector3.__mul__.__doc__ = """
+    Multiples this object by a scalar, ``Vector3``, or a ``Matrix``, producing a new object.
+    
+    The exact effect is determined by the type of value. If ``value`` is a scalar, 
+    the result is standard scalar multiplication.  If it is a point, then the
+    result is pointwise multiplication. Finally, if is a matrix, then we use the
+    matrix to transform the object.  We treat matrix transformation as multiplication
+    on the right to make in-place multiplication easier.  See :class:`Matrix` doe more
+    
+    :param value: value to multiply by
+    :type value:  ``int``, ``float``, ``Vector3`` or ``Matrix``
+    
+    :return: the altered object
+    :rtype:  ``Vector3``
+    """
+
+Vector3.__rmul__.__doc__ = """
+    Multiplies this object by a scalar or ``Vector3`` on the left.
+    
+    The exact effect is determined by the type of value. If ``value`` is a scalar, 
+    the result is standard scalar multiplication.  If it is a 2d tuple, then the
+    result is pointwise multiplication. We do not allow matrix multiplication on 
+    the left. 
+    
+    :param value: The value to multiply by
+    :type value:  ``int``, ``float``, or ``Vector3``
+    
+    :return: the scalar multiple of ``self`` and ``scalar``
+    :rtype:  ``Vector3``
+    """
+
+Vector3.__truediv__.__doc__ = """
+    Divides this object by a scalar or a ``Vector3`` on the right, producting a new object.
+    
+    The exact effect is determined by the type of value. If ``value`` is a scalar, 
+    the result is standard scalar division.  If it is a ``Vector3``, then the
+    result is pointwise division.
+    
+    The value returned has the same type as ``self`` (so if ``self`` is an instance
+    of a subclass, it uses that object instead of the original class. The contents of 
+    this object are not altered.
+    
+    :param value: The value to multiply by
+    :type value:  ``int``, ``float``, or ``Vector3``
+    
+    :return: the division of ``self`` by ``value``
+    :rtype:  ``Vector3``
+    """
+
+Vector3.__rtruediv__.__doc__ = """
+    Divides a scalar or ``Vector3`` by this object.
+    
+    Dividing by a point means pointwise reciprocation, followed by multiplication.
+    
+    :param value: The value to divide
+    :type value:  ``int``, ``float``, or ``Vector3``
+    
+    :return: the division of ``value`` by ``self``
+    :rtype: 
+    """
+    
+Vector3.under.__doc__ = """
+    Compares ``self`` to ``other`` under the domination partial order
+    
+    We say that one point dominates  another is all components of the first are greater 
+    than or equal to the components of the second.  This is a partial order, not a total 
+    one.
+    
+    :param other: The object to check
+    :type other:  ``Vector3``
+    
+    :return: True if ``other`` dominates ``self``; False otherwise
+    :rtype:  ``bool``
+    """
+
+Vector3.over.__doc__ = """
+    Compares ``self`` to ``other`` under the domination partial order
+    
+    We say that one point dominates  another is all components of the 
+    first are greater than or equal to the components of the second.  This is a
+    partial order, not a total one.
+    
+    :param other: The object to check
+    :type other:  ``Vector3``
+    
+    :return: True if ``self`` dominates ``other``; False otherwise
+    :rtype:  ``bool``
+    """
+
+Vector3.isZero.__doc__ = """
+    Determines whether or not this object is 'close enough' to the origin.
+    
+    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+    It does not require exact equality for floats.
+    
+    :return: True if this object is 'close enough' to the origin; False otherwise
+    :rtype:  ``bool``
+    """
+
+Vector3.interpolant.__doc__ = """
+    Interpolates this object with another, producing a new object
+    
+    The resulting value is::
+        
+        alpha*self+(1-alpha)*other 
+    
+    according to the rules of addition and scalar multiplication.
+    
+    :param other: object to interpolate with
+    :type other:  ``Vector3``
+    
+    :param alpha: scalar to interpolate by
+    :type alpha:  ``int`` or ``float``
+    
+    :return: the interpolation of this object and ``other`` via ``alpha``.
+    :rtype:  ``Vector3``
+    """
+
+Vector3.interpolate.__doc__ = """
+    Interpolates this object with another in place
+    
+    This method will modify the attributes of this oject.  The new attributes will
+    be equivalent to::
+        
+        alpha*self+(1-alpha)*other 
+    
+    according to the rules of addition and scalar multiplication.
+    
+    This method returns this object for chaining.
+    
+    :param other: object to interpolate with
+    :type other:  ``Vector3``
+    
+    :param alpha: scalar to interpolate by
+    :type alpha:  ``int`` or ``float``
+    
+    :return: This object, newly modified
+    """
+
+Vector3.copy.__doc__ = """
+    :return: A copy of this point
+    :rtype:  ``Vector3``
+    """
+
+Vector3.list.__doc__ = """
+    :return: A python list with the contents of this point.
+    :rtype:  ``list``
+    """
+
+Vector3.clamp.__doc__ = """
+    Clamps this point to the range [``low``, ``high``].
+    
+    Any value in this tuple less than ``low`` is set to ``low``.  Any value greater 
+    than ``high`` is set to ``high``.
+    
+    This method returns this object for chaining.
+    
+    :param low: The low range of the clamp
+    :type low:  ``int`` or ``float``
+    
+    :param high: The high range of the clamp
+    :type high:  ``int`` or ``float``
+    
+    :return: This object, newly modified
+    :rtype:  ``Vector3``
+    """

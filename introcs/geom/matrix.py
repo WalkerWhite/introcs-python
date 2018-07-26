@@ -4,8 +4,8 @@ Classes for representing matrices.
 We assume that all matrices at 4x4 matrices, allowing us to represent affine transforms
 on homogeneous coordinates.
 
-Author: Walker M. White (wmw2)
-Date:   July 13, 2017 (Python 3 version)
+:author:  Walker M. White (wmw2)
+:version: July 13, 2018
 """
 import numpy as np
 
@@ -89,7 +89,9 @@ class Matrix(object):
         :return: A readable string representation of this matrix.
         :rtype:  ``str``
         """
-        return str(self._data)
+        data = list(self._data)
+        data = list(map(list,data))
+        return str(data).replace('], [','],\n [')
     
     def __repr__(self):
         """
@@ -97,6 +99,37 @@ class Matrix(object):
         :rtype:  ``str``
         """
         return str(self.__class__)+str(self)
+    
+    # COMPARISON
+    def __eq__(self, other):
+        """
+        Compares this object with ``other`` 
+        
+        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+        It does not require exact equality for floats.  Equivalence also requires type
+        equivalence.
+        
+        :param other: The object to check
+        
+        :return: True if ``self`` and ``other`` are equivalent
+        :rtype:  ``bool``
+        """
+        import numpy
+        return (type(other) == type(self) and numpy.allclose(self._data,other._data))
+    
+    def __ne__(self, other):
+        """
+        Compares this object with ``other`` 
+        
+        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
+        It does not require exact equality for floats.
+        
+        :param other: The object to check
+        
+        :return: False if ``self`` and ``other`` are equivalent objects. 
+        :rtype:  ``bool``
+        """
+        return not self == other
     
     def __mul__(self,other):
         """
@@ -106,8 +139,14 @@ class Matrix(object):
         us to read graphics operations left to right (which is more natural). This 
         method does not modify this matrix.
         
+        For example, suppose ``p`` is a rotation and ``q`` is a translation.  Then::
+            
+            p * q
+        
+        produces a rotation followed by a translation. 
+        
         :param other: the matrix to pre-multiply
-        :type other:  :class:`GMatrix`
+        :type other:  ``Matrix``
         
         :return: The result of premultiplying this matrix by ``other``
         :rtype:  ``Matrix``
@@ -126,7 +165,15 @@ class Matrix(object):
         This method will modify the attributes of this oject. This method returns this
         object for chaining.
         
+        For example, suppose ``p`` is a rotation and ``q`` is a translation.  Then::
+            
+            p *= q
+            
+        changes ``p`` into a rotation followed by a translation. 
+        
+        
         :return: This object, newly modified
+        :rtype:  ``Matrix``
         """
         tmp = np.dot(other._data,self._data)
         np.copyto(self._data,tmp)
@@ -144,7 +191,7 @@ class Matrix(object):
     def inverse(self):
         """
         :return: the inverse of this matrix
-        :rtype:  :class:`GMatrix`
+        :rtype:  `Matrix``
         """
         m = Matrix()
         np.copyto(m._data,np.linalg.inv(self._data))
@@ -157,6 +204,7 @@ class Matrix(object):
         This method returns this object for chaining.
         
         :return: This object, newly modified
+        :rtype:  `Matrix``
         """
         np.copyto(self._data,np.linalg.inv(self._data))
         return self
@@ -169,6 +217,18 @@ class Matrix(object):
         m = Matrix()
         np.copyto(m._data,np.transpose(self._data))
         return m
+    
+    def transpost(self):
+        """
+        Transposes this matrix in place.
+        
+        This method returns this object for chaining.
+        
+        :return: This object, newly modified
+        :rtype:  `Matrix``
+        """
+        np.copyto(self._data,np.transpose(self._data))
+        return self
     
     def translate(self,x=0,y=0,z=0):
         """
@@ -192,7 +252,7 @@ class Matrix(object):
         r[0,3] = x
         r[1,3] = y
         r[2,3] = z
-        tmp = np.dot(self._data,r)
+        tmp = np.dot(r,self._data)
         np.copyto(self._data,tmp)
         return self
     
@@ -228,7 +288,7 @@ class Matrix(object):
         r[0] = [x*x*f+c,   x*y*f-z*s, x*z*f+y*s, 0]
         r[1] = [y*x*f+z*s, y*y*f+c,   y*z*f-x*s, 0]
         r[2] = [z*x*f-y*s, z*y*f+x*s, z*z*f+c,   0]
-        tmp = np.dot(self._data,r)
+        tmp = np.dot(r,self._data)
         np.copyto(self._data,tmp)
         return self
     
@@ -254,7 +314,7 @@ class Matrix(object):
         s[0,0] = x
         s[1,1] = y
         s[2,2] = z
-        tmp = np.dot(self._data,s)
+        tmp = np.dot(s,self._data)
         np.copyto(self._data,tmp)
         return self
     

@@ -22,9 +22,11 @@ For a complete list of modules provided by this package, see the associated docu
 Key features include, but are not limited to
 
 * Method-free string functions
+* Method-free tuple functions
 * Simplified unit test utilities
 * Simplified web connections (similar to the classic `urllib2`)
 * Simplified color model interfaces
+* Improved graphics turtle
 
 These packages were developed as part of the introduction to computing sequence at 
 Cornell University. However, they are free to all educators that might find them useful.

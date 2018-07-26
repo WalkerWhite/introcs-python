@@ -8,9 +8,62 @@ understanding of OO programming.
 The assert functions in this module are different from standard assert statements.
 They stop execution of Python and report the location of the error.
 
-Author: Walker M. White (wmw2)
-Date:   July 13, 2017 (Python 3 version)
+:author:  Walker M. White (wmw2)
+:version: July 13, 2018
 """
+
+
+def isfloat(s):
+    """
+    Checks whether the string ``s`` represents a float.
+    
+    :param s: the candidate string to test
+    :type s:  ``str``
+    
+    :return: True if s is the string representation of a number
+    :rtype:  ``bool``
+    """
+    try:
+        x = float(s)
+        return True
+    except:
+        return False
+
+
+def isint(s):
+    """
+    Checks whether the string ``s`` represents an integer.
+    
+    :param s: the candidate string to test
+    :type s:  ``str``
+    
+    :return: True if s is the string representation of an integer
+    :rtype:  ``bool``
+    """
+    try:
+        x = int(s)
+        return True
+    except:
+        return False
+
+
+def isbool(s):
+    """
+    Checks whether the string ``s`` represents a boolean.
+    
+    The string requires Python capitalization (e.g. 'True', not 'true').
+    
+    :param s: the candidate string to test
+    :type s:  ``str``
+    
+    :return: True if s is the string representation of a boolean
+    :rtype:  ``bool``
+    """
+    if type(s) in [int,float,bool]:
+        return True
+    elif (type(s) != str):
+        return False
+    return s in ['True','False']
 
 
 def quit_with_error(msg):
@@ -77,7 +130,7 @@ def assert_not_equals(expected,received):
     :param received: The value the test actually had
     """
     if (expected == received):
-        message = 'assert_not_equals: expected something different from' + repr(expected)
+        message = 'assert_not_equals: expected something different from ' + repr(expected)
         quit_with_error(message)
 
 
@@ -93,7 +146,7 @@ def assert_true(received):
     :param received: The value the test actually had
     """
     if (not received):
-        msg = "assert_true: expected True but instead got False"
+        msg = "assert_true: %s evaluates to False" % repr(received)
         quit_with_error(msg)
 
 
@@ -109,7 +162,7 @@ def assert_false(received):
     :param received: The value the test actually had
     """
     if (received):
-        msg = "assert_false: expected False but instead got True"
+        msg = "assert_false: %s evaluates to True" % repr(received)
         quit_with_error(msg)
 
 
@@ -144,17 +197,15 @@ def assert_floats_equal(expected, received):
     number = [float, int]  # list of number types
     if type(expected) not in number:
         msg = ("assert_floats_equal: " +
-                "first argument " + repr(expected) +" is not a number")
+               "first argument " + repr(expected) +" is not a number")
         quit_with_error(msg)
-    
-    if type(received) not in number:
+    elif type(received) not in number:
         msg = ("assert_floats_equal: " +
-              "second argument " + repr(received) +" is not a number")
+               "second argument " + repr(received) +" is not a number")
         quit_with_error(msg)
-    
-    if (not numpy.allclose([expected],[received])):
+    elif (not numpy.allclose([expected],[received])):
         msg = ("assert_floats_equal: expected " + repr(expected) +
-                " but instead got " + repr(received))
+               " but instead got " + repr(received))
         quit_with_error(msg)
 
 
@@ -191,14 +242,12 @@ def assert_floats_not_equal(expected, received):
         msg = ('assert_floats_not_equal: ' +
                 'first argument ' + repr(expected) +' is not a number')
         quit_with_error(msg)
-    
-    if type(received) not in number:
+    elif type(received) not in number:
         msg = ("assert_floats_not_equal: " +
               "second argument " + repr(received) +" is not a number")
         quit_with_error(msg)
-    
-    if (numpy.allclose([expected],[received])):
-        msg = ('assert_floats_not_equal: expected something different from' +
+    elif (numpy.allclose([expected],[received])):
+        msg = ('assert_floats_not_equal: expected something different from ' +
                 repr(expected))
         quit_with_error(msg)
 
@@ -223,11 +272,11 @@ def assert_float_lists_equal(expected, received):
     must have EXACTLY the same dimension.  If not this function quits with a different 
     error message.  For example::
        
-        assert_float_lists_equal: first argument 'alas' is not a list
+        assert_float_lists_equal: first argument 'alas' is not a sequence
     
     or also::
         
-        assert_float_lists_equal: lists [1] and [2,3] are not comparable
+        assert_float_lists_equal: sequences [1] and [2,3] have different sizes
     
     :param expected: The value you expect the test to have
     :type expected:  ``list`` or ``tuple``
@@ -236,31 +285,40 @@ def assert_float_lists_equal(expected, received):
     :type received:  ``list`` or ``tuple``
     """
     import numpy
-    number = [float, int]  # list of number types
-    if not type(expected) in [list,tuple]:
-        msg = ("assert_float_lists_equal: " +
-                "first argument " + repr(expected) +" is neither a list nor tuple")
-        quit_with_error(msg)
-    
-    if not type(received) in [list,tuple]:
-        msg = ("assert_float_lists_equal: " +
-                "second argument " + repr(received) +" is nneither a list nor tuple")
-        quit_with_error(msg)
-    
-    if len(expected) != len(received):
-        msg = ('assert_float_lists_equal: lists ' + repr(expected) +
-                ' and ' + repr(received)+' have different sizes')
-        quit_with_error(msg)
-    
-    try:   
-        if (not numpy.allclose(expected,received)):
-            msg = ("assert_float_lists_equal: expected " + repr(expected) +
-                " but instead got " + repr(received))
+    try:
+        number = [float, int]  # list of number types
+        if not type(expected) in [list,tuple]:
+            msg = ( "assert_float_lists_equal: " +
+                    "first argument " + repr(expected) +' is not a sequence')
+            quit_with_error(msg)
+        elif not type(received) in [list,tuple]:
+            msg = ( "assert_float_lists_equal: " +
+                    "second argument " + repr(received) +' is not a sequence')
+            quit_with_error(msg)
+        elif sum(map(lambda x : 0 if type(x) in [int,float] else 1,expected)) > 0:
+            msg = ( "assert_float_lists_equal: " +
+                    "first argument " + repr(expected) +" has non-numeric values")
+            quit_with_error(msg)
+        elif sum(map(lambda x : 0 if type(x) in [int,float] else 1,expected)) > 0:
+            msg = ( "assert_float_lists_equal: " +
+                    "first argument " + repr(expected) +" has non-numeric values")
+            quit_with_error(msg)
+        elif sum(map(lambda x : 0 if type(x) in [int,float] else 1,received)) > 0:
+            msg = ( "assert_float_lists_equal: " +
+                    "second argument " + repr(received) +" has non-numeric values")
+            quit_with_error(msg)
+        elif len(expected) != len(received):
+            msg = ( 'assert_float_lists_equal: sequences ' + repr(expected) +
+                    ' and ' + repr(received)+' have different sizes')
+            quit_with_error(msg)
+        elif (not numpy.allclose(expected,received)):
+            msg = ( "assert_float_lists_equal: expected " + repr(expected) +
+                    " but instead got " + repr(received))
             quit_with_error(msg)
     except:
-            msg = ('assert_float_lists_equal: sequences ' + repr(expected) +
-                    ' and ' + repr(received)+' are not comparable')
-            quit_with_error(msg)
+        msg = ( 'assert_float_lists_equal: sequences ' + repr(expected) +
+                ' and ' + repr(received)+' are not comparable')
+        quit_with_error(msg)
 
 
 def assert_float_lists_not_equal(expected, received):
@@ -279,15 +337,17 @@ def assert_float_lists_not_equal(expected, received):
         assert_float_lists_not_equal: expected something different from [[1,2],[3,4]] 
     
     **IMPORTANT**: 
-    The arguments expected and received should each lists of numbers. Furthemore, they 
-    must have EXACTLY the same dimension.  If not this function quits with a different 
-    error message.  For example::
-       
+    The arguments expected and received should each be sequences of numbers. If not this
+    function quits with a different error message.  For example::
+           
         assert_float_lists_not_equal: first argument 'alas' is not a list
     
     or also::
         
-        assert_float_lists_not_equal: lists [1] and [2,3] are not comparable
+        assert_float_lists_not_equal: first argument (1, 'a') has non-numeric values
+    
+    It is not a problem if the sequences have different dimensions as long as they are
+    numeric. In that case, the function will not quit with an error. 
     
     :param expected: The value you expect the test to have
     :type expected:  ``list`` or ``tuple``
@@ -296,28 +356,31 @@ def assert_float_lists_not_equal(expected, received):
     :type received:  ``list`` or ``tuple``
     """
     import numpy
-    number = [float, int]  # list of number types
-    if not type(expected) in [list,tuple]:
-        msg = ("assert_float_lists_not_equal: " +
-                "first argument " + repr(expected) +" is neither a list nor tuple")
-        quit_with_error(msg)
-    
-    if not type(received) in [list,tuple]:
-        msg = ("assert_float_lists_not_equal: " +
-                "second argument " + repr(received) +" is neither a list nor tuple")
-        quit_with_error(msg)
-    
-    if len(expected) != len(received):
-        msg = ('assert_float_lists_equal: lists ' + repr(expected) +
-                ' and ' + repr(received)+' have different sizes')
-        quit_with_error(msg)    
-    
-    try:   
-        if (numpy.allclose(expected,received)):
-            msg = ('assert_floats_not_equal: expected something different from' +
+    try:
+        number = [float, int]  # list of number types
+        if not type(expected) in [list,tuple]:
+            msg = ( "assert_float_lists_not_equal: " +
+                    "first argument " + repr(expected) +' is not a sequence')
+            quit_with_error(msg)
+        elif not type(received) in [list,tuple]:
+            msg = ( "assert_float_lists_not_equal: " +
+                    "second argument " + repr(received) +' is not a sequence')
+            quit_with_error(msg)
+        elif sum(map(lambda x : 0 if type(x) in [int,float] else 1,expected)) > 0:
+            msg = ( "assert_float_lists_not_equal: " +
+                    "first argument " + repr(expected) +' has non-numeric values')
+            quit_with_error(msg)
+        elif sum(map(lambda x : 0 if type(x) in [int,float] else 1,received)) > 0:
+            msg = ( "assert_float_lists_not_equal: " +
+                    "second argument " + repr(received) +' has non-numeric values')
+            quit_with_error(msg)
+        elif (numpy.allclose(expected,received)):
+            msg = ('assert_float_lists_not_equal: expected something different from ' +
                     repr(expected))
             quit_with_error(msg) 
     except:
-            msg = ('assert_float_lists_not_equal: sequences ' + repr(expected) +
-                    ' and ' + repr(received)+' are not comparable')
-            quit_with_error(msg)           
+        msg = ( 'assert_float_lists_not_equal: sequences ' + repr(expected) +
+                ' and ' + repr(received)+' are not comparable')
+        quit_with_error(msg)
+
+
