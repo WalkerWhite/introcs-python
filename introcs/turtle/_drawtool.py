@@ -363,8 +363,10 @@ class _DrawTool(object):
         """
         Deletes this drawing tool object, removing it from the window.
         """
-        self._window._unregister(self)
-    
+        try:
+            self._window._unregister(self)
+        except:
+            pass
     
     # HIDDEN ATTRIBUTES
     def _set_orientation(self,value,show=True):

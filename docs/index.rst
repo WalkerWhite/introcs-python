@@ -26,10 +26,10 @@ Contents
     
     strings
     tuples
-    colors
-    geometry
     unittest
     urltools
+    colors
+    geometry
     graphics
     filetools
 

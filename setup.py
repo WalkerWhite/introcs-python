@@ -37,7 +37,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.6.dev1',  # Required
+    version='0.6.dev2',  # Required
     
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -123,15 +123,15 @@ setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages(),  # Required
-
+    packages=find_packages(exclude=("tests",)),  # Required
+    
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy'],  # Optional
+    install_requires=['numpy','pillow'],  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"

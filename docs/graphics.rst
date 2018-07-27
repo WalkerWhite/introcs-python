@@ -16,7 +16,7 @@ have multiple windows open, each with its own turtle?
 
 In addition, we really do not like that the official turtle uses the module as a 
 class-style object. This is an design decision from the old days of Python that does 
-not make sense in a Python 3 world.  In addition, module garbage collection is very murky, 
+not make sense in a Python 3 world.  Module garbage collection is very murky, 
 so it is much better to use classes when you want to implement something mutable.
 
 In implementing this class, we were inspired by the Java version of the turtle from the

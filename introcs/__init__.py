@@ -22,6 +22,7 @@ Key features include, but are not limited to
 :author:  Walker M. White (wmw2)
 :version: July 13, 2018
 """
+name = 'introcs'
 from .geom import *
 from .colors import *
 from .strings import *
