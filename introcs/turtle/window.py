@@ -17,6 +17,12 @@ access to the full features of Tkinter. To prevent reentrant locks, we do not ac
 lock in any method with prefix ``_tk_internal``. Those are assumed to be helper methods
 inside of a lock.
 
+While turtle windows may be resized, take great care when resizing them while
+drawing.  Since the origin is typically the center of the window, resizing a
+turtle window will shift the drawing implements (``Turtle`` and ``Pen`` objects)
+to a new position.  For the most part, this should preserve coordinates, but
+round-off error may be an issue.
+
 :author:  Walker M. White (wmw2)
 :version: July 24, 2018
 """
@@ -31,7 +37,7 @@ class AttachmentError(Exception):
     """
     Instance is an error for an illegal drawing operation.
     
-    This error is to prevent drawing tools from using commands when they are unhooked
+    This error is used to prevent drawing tools from using commands when they are unhooked
     from their window.
     """
     pass
@@ -41,38 +47,10 @@ class Window(object):
     """
     An instance is a GUI windows that support turtle graphics
     
-    You should construct a ``Window`` object before constructing a :class:``Turtle`` or 
-    :class:``Pen``.  You should only need one ``Window`` object at any given time.
-    
-    While turtle windows may be resized, take great care when resizing them while
-    drawing.  Since the origin is typically the center of the window, resizing a
-    turtle window will shift the drawing implements (``Turtle`` and ``Pen`` objects
-    to a new position).  For the most part, this should preserve coordinates, but
-    round-off error may be an issue.
-    
-    :ivar x: The x coordinate for top left corner of window
-    :vartype x: ``int`` >= 0
-    
-    :ivar y: The y coordinate for top left corner of window
-    :vartype y: ``int`` >= 0
-    
-    :ivar width: The width of the window in pixels
-    :vartype width: ``int`` > 0
-    
-    :ivar height: The height of the window in pixels
-    :vartype height: ``int`` > 0
-    
-    :ivar title: The title displayed at top of window bar
-    :vartype title: ``str``
-    
-    :ivar resizable: Whether or not the Window supports user resizing
-    :vartype resizable: ``bool``
-    
-    :ivar turtles: The tuple of all turtles attached to this Window
-    :vartype turtles: ``tuple``
-    
-    :ivar pens: The tuple of all pens attached to this Window
-    :vartype pens: ``tuple``
+    You should construct a ``Window`` object before constructing a :class:`Turtle` or 
+    :class:`Pen`. While you should only need one ``Window`` object at any given time,
+    you may have as many as you want.  Deleteing a ``Window`` object will close the
+    window, making the associated turtles and pens invalid.
     """
     # PRIVATE ATTRIBUTES:
     #    _tkkey     : A unique key for Tkinter
@@ -293,8 +271,6 @@ class Window(object):
     # BUILT-IN METHODS
     def __init__(self, x=50, y=50, width=700, height=700, scale=1):
         """
-        Creates a new Window to support turtle graphics
-        
         :param x: initial x coordinate (default 50)
         :type x: ``int`` >= 0
         
@@ -371,8 +347,8 @@ class Window(object):
         """
         Displays any pending drawing commands on the screen.
         
-        This command is necessary when ``Turtle`` or ``Pen`` speed is set to 0.  When 
-        that happens, the drawing tool will not force a refresh until this command is
+        This command is necessary when :class:`Turtle` or :class:`Pen` speed is set to 0.  
+        When that happens, the drawing tool will not force a refresh until this command is
         executed.
         """
         with self._lock:

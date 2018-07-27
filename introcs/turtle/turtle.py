@@ -1,6 +1,10 @@
 """
 The Turtle graphics tool
 
+A graphics turtle is a pen that is controlled by direction and movement. The turtle 
+is a cursor that that you control by moving it left, right, forward, or backward.  
+As it moves, it draws a line of the same color as  the Turtle.
+
 This is an updated version of the classic Python Turtle that provides better support
 for Python 3. It also uses properties which provide better abstractions and protections
 for students.
@@ -134,36 +138,9 @@ class Turtle(_DrawTool):
     """
     An instance represents a graphics turtle.
     
-    A graphics turtle is a pen that is controlled by direction and movement. The turtle 
-    is a cursor that that you control by moving it left, right, forward, or backward.  
-    As it moves, it draws a line of the same color as  the Turtle.
-    
-    :ivar heading: The heading of this turtle in degrees.
-    :vartype heading: ``float``
-    
-    :ivar speed: The animation speed of this turtle.
-    :vartype speed: ``int`` in 0..10
-    
-    :ivar color: The color of this turtle
-    :vartype color: ``RGB``, ``HSV`` or ``str``
-    
-    :ivar stroke: The line width
-    :vartype stroke: ``int`` or``float``
-    
-    :ivar dash: The dash pattern
-    :vartype dash: ``tuple`` of ``int`` values
-    
-    :ivar visible: Whether the turtle's icon is visible
-    :vartype visible: ``bool``
-    
-    :ivar drawmode: Whether the turtle is in draw mode.
-    :vartype drawmode: ``bool``
-    
-    :ivar x: The x-coordinate of this turtle
-    :vartype x: ``float``
-    
-    :ivar y: The t-coordinate of this turtle
-    :vartype y: ``float``
+    The turtle is attached to a window on creation, and this window cannot be changed.
+    If the window is closed or deleted, the turtle can no longer be used.  Any attempt
+    to call a graphics method after the window is disposed will result in an error.
     """
     # PRIVATE ATTRIBUTES:
     #    _tkkey   : A unique key for Tkinter
@@ -181,7 +158,7 @@ class Turtle(_DrawTool):
         
         Heading is measured counter clockwise from due east.
         
-        **invariant**: Value must be a ``float``
+        **Invariant**: Value must be a ``float``
         """
         return self._heading
     
@@ -202,14 +179,14 @@ class Turtle(_DrawTool):
         
         Speed 0 is special.  Speed 0 means that no animation takes place at all.  The
         drawing commands will be remembered, but not shown on the screen.  To display
-        the drawing, you must call the method :meth:``flush``. When that method is called,
+        the drawing, you must call the method :meth:`flush`. When that method is called,
         all of the drawing commands will be displayed instantly.  This is useful for 
         fast drawing.
         
         If the speed is currently 0, changing the speed will immediately flush any
         existing drawing commands.
         
-        **invariant**: Value must be an ``int`` in the range 0..10.
+        **Invariant**: Value must be an ``int`` in the range 0..10.
         """
         return self._speed
     
@@ -227,8 +204,8 @@ class Turtle(_DrawTool):
         All subsequent draw commands (forward/back) draw using this color. If the color 
         changes, it only affects future draw commands, not past ones.
         
-        **invariant**: Value must be either an additive color model (e.g. RGB or HSV) or 
-        string representing a color name or a web color (e.g. '#f3CC02').
+        **Invariant**: Value must be either an additive color model (e.g. RGB or HSV) or 
+        string representing a color name or a web color (e.g. ``'#f3CC02'``).
         """
         return self._edge
     
@@ -246,7 +223,7 @@ class Turtle(_DrawTool):
         will increase (or decrease, if your implementation supports sub-pixel graphics)
         the stroke width.
         
-        **invariant**: Value must be either a positive ``float``
+        **Invariant**: Value must be either a positive ``float``
         """
         return self._width
     
@@ -268,9 +245,9 @@ class Turtle(_DrawTool):
         pixels that patterns repeat.  Similarly (10,5,5,10) will draw for 10 pixels, 
         stop for 5 pixels, draw for 10 pixels and the stop for 5 pixels before repeating.
         
-        If this value is None, the line will be solid.
+        If this value is ``None``, the line will be solid.
         
-        **invariant**: Value must be ``None`` or a non-empty tuple of positive integers.
+        **Invariant**: Value must be ``None`` or a non-empty tuple of positive integers.
         """
         return self._dash
     
@@ -311,7 +288,7 @@ class Turtle(_DrawTool):
         
         All drawing calls are active if an only if this mode is True
         
-        **invariant**: Value must be a ``bool``
+        **Invariant**: Value must be a ``bool``
         """
         return self._isdown
     
@@ -349,8 +326,6 @@ class Turtle(_DrawTool):
     # BUILT-IN METHODS
     def __init__(self, screen, position=(0, 0), color='red', heading = 0, speed=10):
         """
-        Creates a new turtle to draw on the given screen.
-        
         :param screen: window object that turtle will draw on.
         :type screen:  :class:`Window`
         
@@ -394,7 +369,7 @@ class Turtle(_DrawTool):
         """
         Moves the turtle forward by the given amount.
         
-        This method draws a line if drawmode is True.
+        This method draws a line if :attr:`drawmode` is True.
         
         :param distance: distance to move in pixels
         :type distance:  ``int`` or ``float``
@@ -421,7 +396,7 @@ class Turtle(_DrawTool):
         """
         Moves the turtle backward by the given amount.
         
-        This method draws a line if drawmode is True.
+        This method draws a line if :attr:`drawmode` is True.
         
         :param distance: distance to move in pixels
         :type distance:  ``int`` or ``float``
@@ -472,7 +447,7 @@ class Turtle(_DrawTool):
         """
         Moves the turtle to given position without drawing.
         
-        This method does not draw, regardless of the drawmode.
+        This method does not draw, regardless of the :attr:`drawmode`.
         
         :param x: new x position for turtle
         :type x:  ``int`` or ``float``
@@ -491,18 +466,22 @@ class Turtle(_DrawTool):
     
     def clear(self):
         """
-        Deletes the turtle's drawings from the window.
+        Deletes the turtle's drawings from the :class:`Window`.
         
-        This method does not move the turtle or alter its attributes.
+        This method does not move the turtle or alter its attributes.  It is different
+        from the window's :meth:`~Window.clear` method in that no other turtles are
+        affected and the turtle is not removed.
         """
         self._mark = True
         self._window._reset(self)
         
     def reset(self):
         """
-        Deletes the turtle's drawings from the window.
+        Deletes the turtle's drawings from the :class:`Window`.
         
         This method re-centers the turtle and resets all attributes to their defaults.
+        This method is different from the window's :meth:`~Window.clear` method in that 
+        no other turtles are affected and the turtle is not removed.
         """
         self._window._reset(self)
         self._x = 0
@@ -526,7 +505,10 @@ class Turtle(_DrawTool):
     
     def flush(self):
         """
-        Forces a redraw of the associated Window.
+        Forces a redraw of the associated :class:`Window`.
+        
+        This is the same as calling :meth:`~Window.flush` on the associated window. 
+        It is necessary to update the graphics when the turtle speed is 0.
         """
         self._flush()
         self._mark = True

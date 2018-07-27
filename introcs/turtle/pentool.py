@@ -1,10 +1,14 @@
 """
 The Pen graphics tool
 
-This is an updated version of the classic Python Pen that provides better support
-for Python 3. In that version, turtles (which draw lines) and pens (which can draw solids) 
-are conflated. Here we separate them to make it easier for beginners. We also use 
-properties which provide better abstractions and protections for students.
+A graphics pen is like a ``Turtle`` except that it does not have a heading, and there 
+is no ``drawmode`` attribute. Instead, the pen relies on explicit drawing commands 
+such as :meth:`drawLine` or :meth:`drawCircle`.
+
+Another difference with the pen is that it can draw solid shapes.  The pen has an 
+attribute called ``solid``.  When this attribute is set to True, it will fill the 
+insides of any polygon traced by its ``drawLine`` method. However, the fill will not 
+be completed until ``solid`` is set to False, or the move method is invoked.
 
 This class is built on the Tkinter canvas object.  That means we were able to add support 
 for dashes and stroke width which did not exist in the original pen.  We also have
@@ -81,41 +85,9 @@ class Pen(_DrawTool):
     """
     An instance represents a graphics pen.
     
-    A graphics pen is like a ``Turtle`` except that it does not have a heading, and there 
-    is no ``drawmode`` attribute. Instead, the pen relies on explicit drawing commands 
-    such as :meth:`drawLine` or :meth:`drawCircle`.
-    
-    Another difference with the pen is that it can draw solid shapes.  The pen has an 
-    attribute called ``solid``.  When this attribute is set to True, it will fill the 
-    insides of any polygon traced by its ``drawLine`` method. However, the fill will not 
-    be completed until ``solid`` is set to False, or the move method is invoked.
-    
-    :ivar speed: The animation speed of this pen.
-    :vartype speed: ``int`` in 0..10
-    
-    :ivar solid: Whether the pen is drawing a solid shape
-    :vartype solid: ``bool``
-    
-    :ivar edgecolor: The outlining color of this pen
-    :vartype edgecolor: ``RGB``, ``HSV`` or ``str``
-    
-    :ivar fillcolor: The solid color of this pen
-    :vartype fillcolor: ``RGB``, ``HSV`` or ``str``
-    
-    :ivar stroke: The line width
-    :vartype stroke: ``int`` or``float``
-    
-    :ivar dash: The dash pattern
-    :vartype dash: ``tuple`` of ``int`` values
-    
-    :ivar visible: Whether the pen's icon is visible
-    :vartype visible: ``bool``
-    
-    :ivar x: The x-coordinate of this turtle
-    :vartype x: ``float``
-    
-    :ivar y: The t-coordinate of this turtle
-    :vartype y: ``float``
+    The pen is attached to a window on creation, and this window cannot be changed.
+    If the window is closed or deleted, the pen can no longer be used.  Any attempt
+    to call a graphics method after the window is disposed will result in an error.
     """
     # PRIVATE ATTRIBUTES:
     #    _tkkey   : A unique key for Tkinter
@@ -136,14 +108,14 @@ class Pen(_DrawTool):
         
         Speed 0 is special.  Speed 0 means that no animation takes place at all.  The
         drawing commands will be remembered, but not shown on the screen.  To display
-        the drawing, you must call the method :meth:``flush``. When that method is called,
+        the drawing, you must call the method :meth:`flush`. When that method is called,
         all of the drawing commands will be displayed instantly.  This is useful for 
         fast drawing.
         
         If the speed is currently 0, changing the speed will immediately flush any
         existing drawing commands.
         
-        **invariant**: Value must be an ``int`` in the range 0..10.
+        **Invariant**: Value must be an ``int`` in the range 0..10.
         """
         return self._speed
     
@@ -159,12 +131,12 @@ class Pen(_DrawTool):
         The solid status of this pen.
         
         If the solid status is True, then the pen will fill the insides of any polygon or 
-        circle subsequently traced by its :meth:`drawLine` and :meth:`drawCircle` method. 
+        oval subsequently traced by its :meth:`drawLine` and :meth:`drawOval` method. 
         If the attribute changes, it only affects future draw commands, not past ones. 
         Switching this attribute between True and False allows the pen to draw both solid 
         and hollow shapes.
         
-        **invariant**: Value must be an ``bool``.
+        **Invariant**: Value must be an ``bool``.
         """
         return self._solid
     
@@ -189,11 +161,11 @@ class Pen(_DrawTool):
         not past ones.
         
         This color is only used for lines and the border of circles.  It is not the color 
-        used for filling in solid areas (if the ``solid`` attribute  is True).  See the 
-        attribute ``fill`` for solid shapes.
+        used for filling in solid areas (if the :attr:`solid` attribute  is True).  See the 
+        attribute :attr:`fillcolor` for solid shapes.
         
-        **invariant**: Value must be either an additive color model (e.g. RGB or HSV) or 
-        string representing a color name or a web color (e.g. '#f3CC02').
+        **Invariant**: Value must be either an additive color model (e.g. RGB or HSV) or 
+        string representing a color name or a web color (e.g. ``'#f3CC02'``).
         """
         return self._edge
     
@@ -215,11 +187,11 @@ class Pen(_DrawTool):
         color changes, it only affects future draw commands, not past ones.
         
         This color is only used for filling in the insides of solid shapes.  It is not 
-        the color used for the shape border.  See the attribute ``color`` for the 
+        the color used for the shape border.  See the attribute :attr:`edgecolor` for the 
         border color.
         
-        **invariant**: Value must be either an additive color model (e.g. RGB or HSV) or 
-        string representing a color name or a web color (e.g. '#f3CC02').
+        **Invariant**: Value must be either an additive color model (e.g. RGB or HSV) or 
+        string representing a color name or a web color (e.g. ``'#f3CC02'``).
         """
         return self._fill
     
@@ -240,7 +212,7 @@ class Pen(_DrawTool):
         will increase (or decrease, if your implementation supports sub-pixel graphics)
         the stroke width.
         
-        **invariant**: Value must be either a positive ``float``
+        **Invariant**: Value must be either a positive ``float``
         """
         return self._width
     
@@ -262,10 +234,10 @@ class Pen(_DrawTool):
         pixels that patterns repeat.  Similarly (10,5,5,10) will draw for 10 pixels, 
         stop for 5 pixels, draw for 10 pixels and the stop for 5 pixels before repeating.
         
-        If this value is None, the line will be solid. The dash only applies to lines and 
+        If this value is ``None``, the line will be solid. The dash only applies to lines and 
         borders.  The interior of solid shapes are not dashed.
         
-        **invariant**: Value must be ``None`` or a non-empty tuple of positive integers.
+        **Invariant**: Value must be ``None`` or a non-empty tuple of positive integers.
         """
         return self._dash
     
@@ -328,8 +300,8 @@ class Pen(_DrawTool):
         """
         The colors (outline and fill) of this pen.
         
-        This method returns the attributes ``edge`` and ``fill`` as a tuple (in that
-        order).
+        This method returns the attributes :attr:`edgecolor` and :attr:`fillcolor` as a 
+        tuple (in that order).
         
         *This attribute may not be (directly) altered*
         """
@@ -339,8 +311,6 @@ class Pen(_DrawTool):
     # BUILT-IN METHODS
     def __init__(self, screen, position=(0, 0), edgecolor='black',fillcolor='red', speed=10):
         """
-         Creates a new pen to draw on the given screen.
-        
         :param screen: window object that turtle will draw on.
         :type screen:  ``Window``
         
@@ -353,7 +323,7 @@ class Pen(_DrawTool):
         :param fillcolor: initial fill color (default red)
         :type fill: ``RGB``, ``HSV`` or ``str``
         
-        :param speed: initial pen speed (default 0)
+        :param speed: initial pen speed (default 10)
         :type speed:  ``int`` 0..10
         """
         super().__init__(screen,position,edgecolor,fillcolor,speed)
@@ -383,7 +353,7 @@ class Pen(_DrawTool):
         """
         Moves the pen to given position without drawing.
         
-        If the ``fill`` attribute is currently True, this method will complete the fill 
+        If the :attr:`solid` attribute is currently True, this method will complete the fill 
         before moving to the new region. The space between the original position and (x,y) 
         will not be connected.
         
@@ -450,15 +420,18 @@ class Pen(_DrawTool):
     
     def drawOval(self, xradius, yradius):
         """
-        Draws a circle of radius r centered on the pen.
+        Draws a oval with the given radii.
         
         The center of the circle is the current pen coordinates. When done, the position 
         of the pen will remain unchanged.
         
-        If solid is true, will fill when done
+        If :attr:`solid` is true, this will fill the shape when done.
         
-        :param r: radius of the circle
-        :type r:  ``int`` or ``float``
+        :param xradius: radius of the x-axis
+        :type xradius:  ``int`` or ``float``
+        
+        :param yradius: radius of the y-axis
+        :type yradius:  ``int`` or ``float``
         """
         assert (type(xradius) in [int, float]), "%s is not a valid number" % repr(r)
         assert (type(yradius) in [int, float]), "%s is not a valid number" % repr(r)
@@ -484,15 +457,18 @@ class Pen(_DrawTool):
     
     def drawRectangle(self, width, height):
         """
-        Draws a circle of radius r centered on the pen.
+        Draws a rectangle with the given width and height.
         
-        The center of the circle is the current pen coordinates. When done, the position 
-        of the pen will remain unchanged.
+        The current pen coordinates are the bottom left corner of the rectangle. When 
+        done, the position of the pen will remain unchanged.
         
-        If solid is true, will fill when done
+        If :attr:`solid` is true, this will fill the shape when done.
         
-        :param r: radius of the circle
-        :type r:  ``int`` or ``float``
+        :param width: the rectangle width
+        :type width:  ``int`` or ``float``
+        
+        :param height: the rectangle height
+        :type height:  ``int`` or ``float``
         """
         assert (type(width) in [int, float]), "%s is not a valid number" % repr(r)
         assert (type(height) in [int, float]), "%s is not a valid number" % repr(r)
@@ -520,18 +496,22 @@ class Pen(_DrawTool):
     # PUBLIC METHODS
     def clear(self):
         """
-        Deletes the pen's drawings from the window.
+        Deletes the turtle's drawings from the :class:`Window`.
         
-        This method does not move the pen or alter its attributes.
+        This method does not move the turtle or alter its attributes.  It is different
+        from the window's :meth:`~Window.clear` method in that no other turtles are
+        affected and the turtle is not removed.
         """
         self._mark = True
         self._window._reset(self)
         
     def reset(self):
         """
-        Deletes the pen's drawings from the window.
+        Deletes the turtle's drawings from the :class:`Window`.
         
-        This method re-centers the pen and resets all attributes to their defaults.
+        This method re-centers the turtle and resets all attributes to their defaults.
+        This method is different from the window's :meth:`~Window.clear` method in that 
+        no other turtles are affected and the turtle is not removed.
         """
         self._window._reset(self)
         self._x = 0
@@ -558,7 +538,10 @@ class Pen(_DrawTool):
    
     def flush(self):
         """
-        Forces a redraw of the associated Window.
+        Forces a redraw of the associated :class:`Window`.
+        
+        This is the same as calling :meth:`~Window.flush` on the associated window. 
+        It is necessary to update the graphics when the turtle speed is 0.
         """
         self._flush()
         self._mark = True

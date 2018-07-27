@@ -1,0 +1,6 @@
+{
+	"WEATHER"  : "weather.json",
+	"FLEET"    : "fleet.csv",
+	"COLORS"   : "colors.txt",
+	"RULES"    : "rules"
+}

@@ -87,6 +87,7 @@ def fix_attributes(string):
         remnsub = remain[match.start(1):match.end(1)]
         descrip = name.search(remnsub)
         if descrip:
+            prefix += remnsub[:descrip.start()]
             prefix += remnsub[descrip.end():]
             prefix += remain[match.end(1):match.end(0)]
         else:

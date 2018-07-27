@@ -64,8 +64,6 @@ assert_float_lists_not_equal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: assert_float_lists_not_equal
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
    

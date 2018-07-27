@@ -20,7 +20,7 @@ class Matrix(object):
     
     def __init__(self):
         """
-        Creates a new 4x4 identify matrix
+        The constructor creates a new 4x4 identify matrix
         """
         self._data = np.identity(4, dtype=np.float32)
     

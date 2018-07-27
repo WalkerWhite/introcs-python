@@ -1,0 +1,23 @@
+﻿CATEGORY,CONDITIONS,AREA,TIME,CEILING,VISIBILITY,WIND,CROSSWIND
+Student,VMC,Pattern,Day,2000,5,20,8
+Student,VMC,Practice Area,Day,3000,10,20,8
+Student,VMC,Cross Country,Day,3500,10,20,8
+Certified,VMC,Pattern,Day,1500,5,20,10
+Certified,VMC,Practice Area,Day,3000,10,20,10
+Certified,VMC,Cross Country,Day,3000,10,20,10
+Certified,VMC,Local,Night,3000,10,20,10
+Certified,VMC,Cross Country,Night,5000,10,20,10
+50 Hours,VMC,Pattern,Day,1500,5,25,15
+50 Hours,VMC,Practice Area,Day,2000,8,25,15
+50 Hours,VMC,Cross Country,Day,2500,10,25,15
+50 Hours,VMC,Local,Night,3000,10,20,10
+50 Hours,VMC,Cross Country,Night,5000,10,20,10
+Dual,VMC,Pattern,Day,1500,3,30,20
+Dual,VMC,Practice Area,Day,2000,5,30,20
+Dual,VMC,Cross Country,Day,2000,5,30,20
+Dual,VMC,Local,Night,3000,10,20,10
+Dual,VMC,Cross Country,Night,5000,10,20,10
+Certified,IMC,Any,Day,500,1,25,15
+Certified,IMC,Any,Night,1000,2,25,15
+Dual,IMC,Any,Day,500,0.75,30,20
+Dual,IMC,Any,Night,1000,2,25,15

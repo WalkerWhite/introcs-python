@@ -22,8 +22,6 @@ urlinfo
 ^^^^^^^
 .. autofunction:: urlinfo
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
    

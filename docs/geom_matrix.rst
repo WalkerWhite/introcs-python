@@ -20,7 +20,7 @@ to make an identity matrix and then modify it via methods. If you want a special
 of matrix quickly, use one of the class methods.
 
 This is a very advanced class for an introductory course and is almost always delegated
-to behind-the-scenes.
+to behind-the-scenes parts of assignments.
 
 Constructor
 -----------

@@ -137,17 +137,6 @@ class GeomTest(unittest.TestCase):
         third /= secnd
         self.assertEqual(third,first)
         
-        self.assertEqual(abs(first),geom.tuple.Tuple2(1.5,2.5))
-        first.abs()
-        self.assertEqual(first,geom.tuple.Tuple2(1.5,2.5))
-        self.assertEqual(abs(secnd),geom.tuple.Tuple2(1.5,1.0))
-        secnd.abs()
-        self.assertEqual(secnd,geom.tuple.Tuple2(1.5,1.0))
-        third = -first
-        self.assertEqual(abs(third),first)
-        third.abs()
-        self.assertEqual(third,first)
-        
         first = geom.tuple.Tuple2(1.0,3.0)
         secnd = geom.tuple.Tuple2(2.0,1.0)
         self.assertEqual(first.interpolant(secnd,0.5),geom.tuple.Tuple2(1.5,2.0))
@@ -217,9 +206,6 @@ class GeomTest(unittest.TestCase):
         self.assertEqual(forth.z,  3.5)
         self.assertEqual(first,forth)
         self.assertIsNot(first,forth)
-        
-        fifth = geom.tuple.Tuple(0,0,0)
-        self.assertEqual(first.__class__,fifth.__class__)
     
     def test_tuple3_asserts(self):
         """
@@ -261,18 +247,6 @@ class GeomTest(unittest.TestCase):
         third *= secnd
         self.assertEqual(third,geom.tuple.Tuple3(-2.25,-2.5,6.0))
         third /= secnd
-        self.assertEqual(third,first)
-        
-        self.assertEqual(abs(first),geom.tuple.Tuple3(1.5,2.5,3.0))
-        first.abs()
-        self.assertEqual(first,geom.tuple.Tuple3(1.5,2.5,3.0))
-        self.assertEqual(abs(secnd),geom.tuple.Tuple3(1.5,1.0,2.0))
-        secnd.abs()
-        self.assertEqual(secnd,geom.tuple.Tuple3(1.5,1.0,2.0))
-        third = -first
-        self.assertEqual(third,geom.tuple.Tuple3(-1.5,-2.5,-3.0))
-        self.assertEqual(abs(third),first)
-        third.abs()
         self.assertEqual(third,first)
         
         first = geom.tuple.Tuple3(1.0,3.0,2.0)

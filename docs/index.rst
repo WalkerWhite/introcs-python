@@ -30,7 +30,8 @@ Contents
     geometry
     unittest
     urltools
-    turtle
+    graphics
+    filetools
 
 
 Indices and tables
