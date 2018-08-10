@@ -7,7 +7,6 @@ on homogeneous coordinates.
 :author:  Walker M. White (wmw2)
 :version: July 13, 2018
 """
-import numpy as np
 
 
 class Matrix(object):
@@ -22,6 +21,7 @@ class Matrix(object):
         """
         The constructor creates a new 4x4 identify matrix
         """
+        import numpy as np
         self._data = np.identity(4, dtype=np.float32)
     
     @classmethod
@@ -151,6 +151,7 @@ class Matrix(object):
         :return: The result of premultiplying this matrix by ``other``
         :rtype:  ``Matrix``
         """
+        import numpy as np
         m = Matrix()
         np.dot(other._data,self._data,m._data)
         return m
@@ -175,6 +176,7 @@ class Matrix(object):
         :return: This object, newly modified
         :rtype:  ``Matrix``
         """
+        import numpy as np
         tmp = np.dot(other._data,self._data)
         np.copyto(self._data,tmp)
         return self
@@ -184,6 +186,7 @@ class Matrix(object):
         :return: a copy of this matrix
         :rtype:  ``Matrix``
         """
+        import numpy as np
         m = Matrix()
         np.copyto(m._data,self._data)
         return m
@@ -193,6 +196,7 @@ class Matrix(object):
         :return: the inverse of this matrix
         :rtype:  `Matrix``
         """
+        import numpy as np
         m = Matrix()
         np.copyto(m._data,np.linalg.inv(self._data))
         return m
@@ -206,6 +210,7 @@ class Matrix(object):
         :return: This object, newly modified
         :rtype:  `Matrix``
         """
+        import numpy as np
         np.copyto(self._data,np.linalg.inv(self._data))
         return self
     
@@ -214,6 +219,7 @@ class Matrix(object):
         :return: the transpose of this matrix
         :rtype:  ``Matrix``
         """
+        import numpy as np
         m = Matrix()
         np.copyto(m._data,np.transpose(self._data))
         return m
@@ -227,6 +233,7 @@ class Matrix(object):
         :return: This object, newly modified
         :rtype:  `Matrix``
         """
+        import numpy as np
         np.copyto(self._data,np.transpose(self._data))
         return self
     
@@ -248,6 +255,7 @@ class Matrix(object):
         
         :return: This object, newly modified
         """
+        import numpy as np
         r = np.identity(4, dtype=np.float32)
         r[0,3] = x
         r[1,3] = y
@@ -280,6 +288,7 @@ class Matrix(object):
         
         :return: This object, newly modified
         """
+        import numpy as np
         # Formula taken from https://en.wikipedia.org/wiki/Rotation_matrix
         c = np.cos(np.radians(ang))
         s = np.sin(np.radians(ang))
@@ -310,6 +319,7 @@ class Matrix(object):
         
         :return: This object, newly modified
         """
+        import numpy as np
         s = np.identity(4, dtype=np.float32)
         s[0,0] = x
         s[1,1] = y
@@ -336,6 +346,7 @@ class Matrix(object):
         :return: The point (x,y,z) transformed by this matrix
         :rtype:  ``tuple``
         """
+        import numpy as np
         b = np.array([x,y,z,1], dtype=np.float32)
         tmp = np.dot(self._data,b)
         return map(float,tuple(tmp[:-1]))
@@ -355,6 +366,7 @@ class Matrix(object):
         :rtype:  ``type(value)``
         
         """
+        import numpy as np
         from .tuple import Tuple2, Tuple3
         if isinstance(value,Tuple2):
             b = np.array([value.x,value.y,0,1], dtype=np.float32)

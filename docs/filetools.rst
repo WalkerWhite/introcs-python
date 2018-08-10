@@ -3,19 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. currentmodule:: introcs.filetools
+.. currentmodule:: introcs
 
 File Functions
 ==============
 
-``import introcs.filetools``
+``import introcs``
 
 This functions are useful handling simple data science assignments. They read and write
-popular (text-based) file formats.  The most value functions are :func:`read_csv` and
+popular (text-based) file formats.  The most valuable functions are :func:`read_csv` and
 :func:`write_csv`, as these are non-trivial to implement.
-
-These functions are relatively new and untested.  Because of that reason, they are not 
-included in the top level of the ``introcs`` module.  They must be imported separately.
 
 Reading
 -------

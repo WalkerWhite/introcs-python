@@ -29,3 +29,4 @@ from .strings import *
 from .tuples import *
 from .testcase import *
 from .urltools import *
+from .filetools import *

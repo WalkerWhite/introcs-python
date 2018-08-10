@@ -32,9 +32,8 @@ def read_txt(filename):
     """
     import json
     try:
-        file = open(filename)
-        data = file.read()
-        file.close()
+        with open(filename) as file:
+            data = file.read()
         return data
     except FileNotFoundError:
         message = 'Text file %s does not exist' % repr(filename)
@@ -63,9 +62,9 @@ def read_json(filename):
     """
     import json
     try:
-        file = open(filename)
-        data = json.loads(file.read())
-        file.close()
+        data = None
+        with open(filename) as file:
+            data = json.loads(file.read())
         return data
     except FileNotFoundError:
         message = 'JSON file %s does not exist' % repr(filename)
@@ -99,23 +98,23 @@ def read_csv(filename):
     :rtype:  2d ``list``
     """
     try:
-        file = open(filename)
-        result = []
-        header = _csv_split(file.readline())
-        column = len(header)
-        result.append(header)
-        if column > 0:
+        import csv
+        with open(filename, newline='') as csvfile:
+            reader  = csv.reader(csvfile)
+            result = []
+            header = None
             mismatch = None
-            pos = 1
-            for line in file:
-                row = _csv_split(line)
-                if not mismatch and len(row) != column:
-                    mismatch = (pos,len(row))
+            pos = 0
+            for row in reader:
+                if not header:
+                    header = row
                 result.append(row)
+                if not mismatch and len(row) != len(header):
+                    mismatch = (pos,len(row))
                 pos += 1
-            if mismatch is None:
-                file.close()
-                return result
+        if mismatch is None and len(result) > 0:
+            return result
+        elif not mismatch is None:
             message = 'CSV file %s has invalid row at %d' % (repr(filename),mismatch[0])
         else:
             message = 'CSV file %s is empty' % repr(filename)
@@ -188,9 +187,8 @@ def write_txt(data,filename):
     :type filename:  ``str``
     """
     try:
-        file = open(filename,'w')
-        file.write(data)
-        file.close()
+        with open(filename,'w') as file:
+            file.write(data)
         return
     except Exception as e:
         message = e.args[0]
@@ -259,6 +257,7 @@ def write_csv(data,filename):
     :type filename:  ``str``
     """
     try:
+        import csv
         import os.path
         prefix, ext = os.path.splitext(filename)
         message = ''
@@ -272,10 +271,10 @@ def write_csv(data,filename):
             message = _check_csv(data)
         
         if not message:
-            file = open(filename,'w')
-            for row in data:
-                file.write(_csv_join(row))
-            file.close()
+            with open(filename,'w',newline='') as csvfile:
+                writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+                for row in data:
+                    writer.writerow(row)
             return
     except PermissionError as e:
         message = e.strerror+': '+filename
@@ -288,94 +287,6 @@ def write_csv(data,filename):
 pass
 # #mark -
 # #mark CSV Helpers
-def _csv_split(line):
-    """
-    Returns a row a single line of a CSV file [INTERNAL FUNCTION]
-    
-    This function is better than the basic split() method because it takes into 
-    account the quotation rules for CSV files.
-    
-    Parameter line: A line of a CSV file
-    Precondition: line is a string
-    """
-    result = []
-    inside = False
-    left = 0
-    for rght in range(len(line)):
-        if not inside and line[rght] == ',':
-            result.append(_dequote(line[left:rght]))
-            left = rght+1
-        elif line[rght] == '"':
-            inside = not inside
-    if line[-1] == '\n':
-        remain = line[left:-1] # Remove line return
-    else:
-        remain = line[left:]
-    result.append(_dequote(remain))
-    return result
-
-
-def _csv_join(row):
-    """
-    Returns single line of a CSV file from a list of values [INTERNAL FUNCTION]
-    
-    This function is better than the basic join() method because it takes into 
-    account the quotation rules for CSV files. In addition, it converts of all the
-    data into properly encoded strings.
-    
-    Parameter row: A row of values to encode
-    Precondition: row is a list
-    """
-    return ','.join(map(_requote,row))+'\n'
-
-
-def _dequote(text):
-    """
-    Returns the value ``text`` missing the external quotes [INTERNAL FUNCTION]
-    
-    External quotes are optional in CSV files. This function removes them, and properly
-    transforms any internal (proper) quotes.
-    
-    If ``text`` has no external quotes, this function does nothing.
-    
-    Parameter text: A string to dequote
-    Precondition: text is a string
-    """
-    if len(text) < 1:
-        return text
-    
-    left = 1 if text[0] == '"' else 0
-    rght = len(text)-1 if text[-1] == '"' else len(text)
-    text = text[left:rght]
-    return text.replace('""','"')
-
-
-def _requote(value):
-    """
-    Returns the value as a string, quoted if necessary [INTERNAL FUNCTION]
-    
-    External quotes are optional in CSV files, but necessary if the value is a string
-    containing either a quote or a comma.  This function searches for those values and
-    quotes the result as necessary.
-    
-    Value does not need to be a string.  In that case, it will convert the string to
-    a value.  If value is a date, it will use the isoformat() method.  Otherwise, the
-    str() function is used.
-    
-    Parameter value: A value to convert
-    Precondition: None
-    """
-    try:
-        text = value.isoformat()
-    except:
-        text = str(value)
-    
-    if '"' in text or ',' in text:
-        text = text.replace('"','""')
-        return '"'+text+'"'
-    return text
-
-
 def _check_csv(data):
     """
     Returns a string representing an error message if data is malformed [INTERNAL FUNCTION]

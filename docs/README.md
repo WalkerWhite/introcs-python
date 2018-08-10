@@ -1,6 +1,6 @@
 # Sphinx Documentation
 
-This director contains the Makefile and ``.rst`` files for generating HTML documentation.  To compile the documentation, you will need the module ``sphinx`` installed in Python:
+This directory contains the Makefile and ``.rst`` files for generating HTML documentation.  To compile the documentation, you will need the module ``sphinx`` installed in Python:
 	
 	pip install sphinx
 
