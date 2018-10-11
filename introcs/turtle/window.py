@@ -334,6 +334,7 @@ class Window(object):
         with self._lock:
             self._clear = True
             self._refreshed = True
+        
         _Context.Instance().refresh()
     
     def dispose(self):
@@ -497,6 +498,8 @@ class Window(object):
             self._drawtool[tool._tkkey] = [tool,None,None]
             self._history[tool._tkkey]  = []
             self._mark = True
+        
+        _Context.Instance().refresh()
     
     def _unregister(self,tool):
         """
@@ -512,6 +515,8 @@ class Window(object):
         
         self._queue_command(None,None,(0,0),self._tk_internal_remove_tool,[tool._tkkey],{'block':False})
         self._mark = True
+        
+        _Context.Instance().refresh()
     
     def _reset(self,tool):
         """
@@ -526,7 +531,10 @@ class Window(object):
             steps = len(self._history[tool._tkkey])
         
         self._queue_command(None,None,(0,0),self._tk_internal_delete_history,[tool._tkkey,steps],{'block':False})
+        self._refreshed = True
         self._mark = True
+        
+        _Context.Instance().refresh()
     
     def _queue_command(self,key,icon,pos,cmd,args,kw):
         """

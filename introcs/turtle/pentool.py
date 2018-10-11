@@ -332,7 +332,8 @@ class Pen(_DrawTool):
         
         self._image = StylusCursor(edgecolor,fillcolor)
         self._cursor = self._image.read()
-
+        self.flush() # Necessary 
+    
     def __repr__(self):
         """
         :return: An unambiguous string representation of this turtle. 

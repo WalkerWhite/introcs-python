@@ -349,6 +349,7 @@ class Turtle(_DrawTool):
         self._image.edge = color
         self._image.fill = color
         self._cursor = self._image.read()
+        self.flush() # Necessary 
     
     def __repr__(self):
         """
@@ -474,6 +475,7 @@ class Turtle(_DrawTool):
         """
         self._mark = True
         self._window._reset(self)
+        
         
     def reset(self):
         """
