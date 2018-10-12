@@ -568,12 +568,12 @@ def is_webcolor(name):
     :return: True if name is a valid web color
     :rtype:  ``bool``
     """
-    if color[0] != '#' or len(color) == 7:
+    if name[0] != '#' or len(name) != 7:
         return False
     try:
-        red = int(color[1:3],16)
-        green = int(color[3:5],16)
-        blue = int(color[5:7],16)
+        red = int(name[1:3],16)
+        green = int(name[3:5],16)
+        blue = int(name[5:7],16)
         return True
     except:
         pass
