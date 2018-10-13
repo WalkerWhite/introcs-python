@@ -19,24 +19,24 @@ import os, time
 class _TK_Thread(threading.Thread):
     """
     An instance is a separate thread for processing Tkinter commands.
-    
+
     This is necessary on Windows and Linux platforms, but not on OS.  Because this thread
     can hang Python, we need to be sure to kill it when no longer needed (typically when
     the last window is destroyed).
     """
     # PRIVATE ATTRIBUTES:
     #   _initd:   Whether the thread is initialized
-    #   _active:  Whether the thread is alive   
+    #   _active:  Whether the thread is alive
     #   _context: The associated Tkinter context
     #   _root   : The Tkinter root
-    
+
     # The refresh rate in milliseconds
-    REFRESH = 1
-    
+    REFRESH = 15
+
     def __init__(self,context):
         """
         Creates and starts a Tkinter thread
-        
+
         :param context: The application context communicating with this thread
         :type context:  ``_AsyncContext``
         """
@@ -45,15 +45,15 @@ class _TK_Thread(threading.Thread):
         self._active  = True
         self._context = context
         self.start()
-        
+
         # Block until the thread is past its initialization stage
         while self._initd:
             time.sleep(self.REFRESH/1000)
-    
+
     def _poll(self):
         """
         Processes an update as part of the main loop.
-        
+
         The method is registered with the after() command and reregisters itself to
         keep itself active.  Its primary purpose is to poll the application context.
         """
@@ -61,17 +61,17 @@ class _TK_Thread(threading.Thread):
             self._root.quit()
         else:
             self._context._tk_update()
-        
+
         self._root.after(self.REFRESH,self._poll)
-    
+
     def run(self):
         """
         Runs the main Tkinter thread.
-        
+
         This thread will continue until the Tk main loop is disposed.
         """
         import tkinter as tk
-        
+
         # The root window is not useful (other than being active).  Hide it
         root = tk.Tk()
         root.protocol("WM_DELETE_WINDOW",self.dispose)
@@ -80,18 +80,18 @@ class _TK_Thread(threading.Thread):
         h = root.winfo_screenheight()
         root.geometry('%dx%d+%d+%d' % (1, 1, w, h))
         self._root = root
-        
+
         self._context._root = root
         self._initd = False
-        
+
         self._root.after(self.REFRESH,self._poll)
         self._root.mainloop()
         self._root.destroy()
-    
+
     def dispose(self):
         """
         Disposes of this Tkinter thread
-        
+
         This command will cause the thread to exit the main loop after the next
         loop iteration. The object can be safely garbage collected.
         """
@@ -101,44 +101,44 @@ class _TK_Thread(threading.Thread):
 class _AsyncContext(object):
     """
     An instance is an asynchronized Tkinter application context for Windows/Linux.
-    
+
     An application context is used to allocate all Tkinter objects, ensuring that they
     are in the proper thread. It is also used to force refreshes of the graphics
     state.
-    
+
     Since there can only be one Tkinter application at a timem this is a singleton
     class.  The only and only object should be accessed through the ``instance()``
     classmethod.
-    
+
     Asynchronized contexts are processed in a seperate thread, because the mainloop
     is required and not optional on these platforms. The main thread communicates
     with the context via shared queues (and locks).
     """
-    
+
     # The singleton instance
     _INSTANCE = None
-    
+
     # The size of the bevel border
     _BORDER  = 3
     # The size of the pre-bevel padding
     _PADDING = 7
-    
+
     @classmethod
     def Instance(cls):
         """
         Returns the single instance, allocating the instance if necessary.
-        
+
         :return: The singleton context instance
         :rtype:  ``_SyncContext``
         """
         if not cls._INSTANCE:
             cls._INSTANCE = cls()
         return cls._INSTANCE
-    
+
     def __init__(self):
         """
         Creates a new Tkinter application context.
-        
+
         This context will allocate the Tkinter ojects in a separate thread.
         """
         self._root = None
@@ -147,68 +147,68 @@ class _AsyncContext(object):
         self._create = []
         self._delete = []
         self._lock = threading.Lock()
-    
+
     def alloc(self,obj,x,y,width,height):
         """
         Allocates a new window object with the given dimensions.
-        
+
         This method does not return a window object, since some contexts must perform
         this allocation asynchronously.  Instead, allocates the Tkinter child components
         and stores them in the previously allocated ``:class:Window`` object ``window``.
         Hence the ``Window`` object can request allocation and then block until it is
         complete.
-        
+
         :param window: The window to store the allocated Tkinter components
         :type window:  ``Window``
-        
+
         :param x: initial x coordinate
         :type x: ``int`` >= 0
-        
+
         :param y: initial y coordinate
         :type y: ``int`` >= 0
-        
+
         :param width: initial window width
         :type width: ``int`` > 0
-        
+
         :param height: initial window height
         :type height: ``int`` > 0
         """
         if not self._bkgd:
             self._bkgd = _TK_Thread(self)
-        
+
         with self._lock:
             self._create.append((obj,x,y,width,height))
-        
+
         while not obj._active:
             pass
-    
+
     def dealloc(self,obj):
         """
         Deallocates a window object.
-        
+
         This method does not guarantee that the window is disposed of immediately.  Instead
         it queues up a request to dispose the window via its ``_tk_dispose()`` method,
         ensuring that this method is called in the proper Tk thread.
-        
+
         :param window: The window to deallocate
         :type window:  ``Window``
         """
         with self._lock:
             self._delete.append(obj._tkkey)
-    
+
     def refresh(self):
         """
         Forces a refresh of the graphics state.
-        
+
         This method is unused for the asynchronous context, and exists only for
         compatibility reasons.
         """
         pass
-    
+
     def dispose(self):
         """
         Disposes this application context.
-        
+
         As this class is a singleton, this method should never be called before
         Python exits.
         """
@@ -243,26 +243,26 @@ class _AsyncContext(object):
                 self._bkgd.dispose()
                 self._bkgd = None
                 self._root = None
-    
+
     def _pack(self,window,x,y,width,height):
         """
         Asynchronously allocates a new window object with the given dimensions.
-        
-        This method is the callback to an allocation request.  It executes in the 
+
+        This method is the callback to an allocation request.  It executes in the
         Tkinter thread.
-        
+
         :param window: The window to store the allocated Tkinter components
         :type window:  ``Window``
-        
+
         :param x: initial x coordinate
         :type x: ``int`` >= 0
-        
+
         :param y: initial y coordinate
         :type y: ``int`` >= 0
-        
+
         :param width: initial window width
         :type width: ``int`` > 0
-        
+
         :param height: initial window height
         :type height: ``int`` > 0
         """
@@ -276,10 +276,10 @@ class _AsyncContext(object):
         canvas.pack(fill=tk.BOTH, expand=tk.YES)
         inner.pack(fill=tk.BOTH,  expand=tk.YES)
         outer.pack(fill=tk.BOTH,  expand=tk.YES)
-        
+
         toplev.geometry( '+%d+%d' % (x,y))
         self._root.update()
-        
+
         # We need some extra state to handle resizing weirdness
         canvas._dw = toplev.winfo_width()-canvas.winfo_width()
         canvas._dh = toplev.winfo_height()-canvas.winfo_height()
@@ -287,7 +287,7 @@ class _AsyncContext(object):
         canvas._lasth = canvas.winfo_height()
         canvas._currw = canvas._lastw
         canvas._currh = canvas._lasth
-        
+
         outer.bind("<Configure>", window._tk_resize)
         window._window = toplev
         window._panels = outer
@@ -299,44 +299,44 @@ class _AsyncContext(object):
 class _SyncContext(object):
     """
     An instance is a synchronized Tkinter application context for MacOS.
-    
+
     An application context is used to allocate all Tkinter objects, ensuring that they
     are in the proper thread. It is also used to force refreshes of the graphics
     state.
-    
+
     Since there can only be one Tkinter application at a timem this is a singleton
     class.  The only and only object should be accessed through the ``instance()``
     classmethod.
-    
-    Synchronized contexts are processed all in the main thread, because MacOS always 
+
+    Synchronized contexts are processed all in the main thread, because MacOS always
     has an implicit event loop for the window objects.  However, the context still
     presents itself as an asychronous event queue for abstraction purposes.
     """
-    
+
     # The singleton instance
     _INSTANCE = None
-    
+
     # The size of the bevel border
     _BORDER  = 3
     # The size of the pre-bevel padding
     _PADDING = 7
-    
+
     @classmethod
     def Instance(cls):
         """
         Returns the single instance, allocating the instance if necessary.
-        
+
         :return: The singleton context instance
         :rtype:  ``_SyncContext``
         """
         if not cls._INSTANCE:
             cls._INSTANCE = cls()
         return cls._INSTANCE
-    
+
     def __init__(self):
         """
         Creates a new Tkinter application context.
-        
+
         This context will allocate the Tkinter ojects in the main thread.
         """
         import tkinter as tk
@@ -345,7 +345,7 @@ class _SyncContext(object):
         self._window = {}
         self._create = []
         self._delete = []
-        
+
         # The root window is not useful (other than being active).  Hide it
         root = tk.Tk()
         root.protocol("WM_DELETE_WINDOW",self.dispose)
@@ -354,29 +354,29 @@ class _SyncContext(object):
         h = root.winfo_screenheight()
         root.geometry('%dx%d+%d+%d' % (1, 1, w, h))
         self._root = root
-    
+
     def alloc(self,window,x,y,width,height):
         """
         Allocates a new window object with the given dimensions.
-        
+
         This method does not return a window object, since some contexts must perform
         this allocation asynchronously.  Instead, allocates the Tkinter child components
         and stores them in the previously allocated ``:class:Window`` object ``window``.
         Hence the ``Window`` object can request allocation and then block until it is
         complete.
-        
+
         :param window: The window to store the allocated Tkinter components
         :type window:  ``Window``
-        
+
         :param x: initial x coordinate
         :type x: ``int`` >= 0
-        
+
         :param y: initial y coordinate
         :type y: ``int`` >= 0
-        
+
         :param width: initial window width
         :type width: ``int`` > 0
-        
+
         :param height: initial window height
         :type height: ``int`` > 0
         """
@@ -390,10 +390,10 @@ class _SyncContext(object):
         canvas.pack(fill=tk.BOTH, expand=tk.YES)
         inner.pack(fill=tk.BOTH,  expand=tk.YES)
         outer.pack(fill=tk.BOTH,  expand=tk.YES)
-        
+
         toplev.geometry( '+%d+%d' % (x,y))
         self.refresh()
-        
+
         # We need some extra state to handle resizing weirdness
         canvas._dw = toplev.winfo_width()-canvas.winfo_width()
         canvas._dh = toplev.winfo_height()-canvas.winfo_height()
@@ -401,7 +401,7 @@ class _SyncContext(object):
         canvas._lasth = canvas.winfo_height()
         canvas._currw = canvas._lastw
         canvas._currh = canvas._lasth
-        
+
         #canvas.bind("<Configure>", window._tk_resize)
         outer.bind("<Configure>", window._tk_resize)
         window._window = toplev
@@ -409,15 +409,15 @@ class _SyncContext(object):
         window._canvas = canvas
         window._active = True
         self._window[window._tkkey] = window
-    
+
     def dealloc(self,window):
         """
         Deallocates a window object.
-        
+
         This method does not guarantee that the window is disposed of immediately.  Instead
         it queues up a request to dispose the window via its ``_tk_dispose()`` method,
         ensuring that this method is called in the proper Tk thread.
-        
+
         :param window: The window to deallocate
         :type window:  ``Window``
         """
@@ -426,22 +426,22 @@ class _SyncContext(object):
             window._tk_dispose()
         except:
             pass
-    
+
     def refresh(self):
         """
         Forces a refresh of the graphics state.
-        
+
         This method is unused for the asynchronous context, and exists only for
         compatibility reasons.
         """
         for key in self._window:
             self._window[key]._tk_update()
         self._root.update()
-    
+
     def dispose(self):
         """
         Disposes this application context.
-        
+
         As this class is a singleton, this method should never be called before
         Python exits.
         """
@@ -461,4 +461,3 @@ if hasattr(os,'uname') and os.uname().sysname=='Darwin':
     _Context = _SyncContext
 else:
     _Context = _AsyncContext
-
