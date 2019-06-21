@@ -14,16 +14,13 @@
 * Added `SSLContext` support to connect to https://
 * Fixed another race condition in `turtle` package
 
-## Version 1.0.3: Second Turtle Fix
+## Version 1.0.3: Turtle Fix
 
 * Another attempt to fix race condition in `turtle` package
 
-## Version 1.0.2: Color Fix
+## Version 1.0.2: Pre-Semester Fixes
 
 * Fixed problem in web color parsing
-
-## Version 1.0.1: Turtle Fix
-
 * Fixed race condition in `turtle` package
 
 ## Version 1.0: Official Release
