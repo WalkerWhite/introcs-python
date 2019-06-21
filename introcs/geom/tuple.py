@@ -6,6 +6,7 @@ The base tuple classes for points and vectors.
 """
 from functools import total_ordering
 
+
 @total_ordering
 class Tuple2(object):
     """
@@ -88,24 +89,24 @@ class Tuple2(object):
         """
         Compares this object with ``other`` 
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.  Equivalence also requires type
-        equivalence.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats. Equivalence also 
+        requires type equivalence.
         
         :param other: The object to check
         
         :return: True if ``self`` and ``other`` are equivalent
         :rtype:  ``bool``
         """
-        import numpy
-        return (type(other) == type(self) and numpy.allclose(self.list(),other.list()))
+        from ..testcase import allclose
+        return (type(other) == type(self) and allclose(self.list(),other.list()))
     
     def __ne__(self, other):
         """
         Compares this object with ``other`` 
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats.
         
         :param other: The object to check
         
@@ -127,7 +128,6 @@ class Tuple2(object):
         :rtype:  ``float``
         """
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
-        import numpy
         if self.x == other.x:
             return self.y < other.y
         return self.x < other.x
@@ -170,8 +170,8 @@ class Tuple2(object):
         """
         Computes the boolean value of this tuple.
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats.
         
         :return: True if this object is 'close enough' to the origin; False otherwise
         :rtype:  ``bool``
@@ -182,14 +182,14 @@ class Tuple2(object):
         """
         Determines whether or not this object is 'close enough' to the origin.
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats.
         
         :return: True if this object is 'close enough' to the origin; False otherwise
         :rtype:  ``bool``
         """
-        import numpy
-        return numpy.allclose([self.x,self.y],[0,0])
+        from ..testcase import allclose
+        return allclose([self.x,self.y],[0,0])
     
     
     # ARITHMETIC
@@ -717,24 +717,24 @@ class Tuple3(object):
         """
         Compares this object with ``other`` 
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.  Equivalence also requires type
-        equivalence.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats. Equivalence also 
+        requires type equivalence.
         
         :param other: The object to check
         
         :return: True if ``self`` and ``other`` are equivalent
         :rtype:  ``bool``
         """
-        import numpy
-        return (type(other) == type(self) and numpy.allclose(self.list(),other.list()))
+        from ..testcase import allclose
+        return (type(other) == type(self) and allclose(self.list(),other.list()))
     
     def __ne__(self, other):
         """
         Compares this object with ``other`` 
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats.
         
         :param other: The object to check
         
@@ -756,7 +756,6 @@ class Tuple3(object):
         :rtype:  ``float``
         """
         assert isinstance(other, type(self)), "%s is not of type %s" % (repr(other), repr(type(self)))
-        import numpy
         if self.x == other.x:
             if self.y == other.y:
                 return self.z < other.z
@@ -802,8 +801,8 @@ class Tuple3(object):
         """
         Computes the boolean value of this tuple.
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats.
         
         :return: True if this object is 'close enough' to the origin; False otherwise
         :rtype:  ``bool``
@@ -814,14 +813,14 @@ class Tuple3(object):
         """
         Determines whether or not this object is 'close enough' to the origin.
         
-        This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-        It does not require exact equality for floats.
+        This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+        "close enough". It does not require exact equality for floats.
         
         :return: True if this object is 'close enough' to the origin; False otherwise
         :rtype:  ``bool``
         """
-        import numpy
-        return numpy.allclose([self.x,self.y,self.z],[0,0,0])
+        from ..testcase import allclose
+        return allclose([self.x,self.y,self.z],[0,0,0])
     
     
     # ARITHMETIC

@@ -380,6 +380,7 @@ class Turtle(_DrawTool):
         angle = self._heading*math.pi/180
         x = math.cos(angle)*distance+self._x
         y = math.sin(angle)*distance+self._y
+
         if self._isdown:
             color = self._to_internal_color(self.color)
             if self._dash:

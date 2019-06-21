@@ -12,7 +12,7 @@ import os.path
 from introcs import filetools
 
 
-class UrlToolsTest(unittest.TestCase):
+class FileToolsTest(unittest.TestCase):
     """
     Unit test for the file tools package
     """
@@ -29,7 +29,7 @@ class UrlToolsTest(unittest.TestCase):
         """
         pass
     
-    def test_read_basic(self):
+    def test01_read_basic(self):
         """
         Tests the basic (non-package) read functions.
         """
@@ -45,8 +45,8 @@ class UrlToolsTest(unittest.TestCase):
         self.assertEqual(data[5][5],'9/1/17')
         self.assertEqual(len(data),15)
         self.assertEqual(len(data[0]),7)
-        
-    def test_read_package(self):
+    
+    def test02_read_package(self):
         """
         Tests the package read function.
         """
@@ -61,8 +61,8 @@ class UrlToolsTest(unittest.TestCase):
         self.assertEqual(len(pckg['FLEET']),15)
         self.assertEqual(len(pckg['FLEET'][0]),7)
         self.assertEqual(pckg['RULES']['TEACHERS'][3][2],'Alan')
-        
-    def test_write(self):
+    
+    def test03_write(self):
         """
         Tests the write functions.
         """

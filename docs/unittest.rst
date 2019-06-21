@@ -29,9 +29,19 @@ isbool
 ^^^^^^
 .. autofunction:: isbool
 
+Comparing Floats
+----------------
+isclose
+^^^^^^^
+.. autofunction:: isclose
 
-Asserting
----------
+allclose
+^^^^^^^^
+.. autofunction:: allclose
+
+
+Asserting Tests
+---------------
 assert_equals
 ^^^^^^^^^^^^^
 .. autofunction:: assert_equals

@@ -9,7 +9,7 @@ import numpy
 from introcs import tuples
 
 
-class GeomTest(unittest.TestCase):
+class TupleTest(unittest.TestCase):
     """
     Unit test for the tuples package
     """
@@ -42,7 +42,7 @@ class GeomTest(unittest.TestCase):
         """
         pass
     
-    def test_tuples_search(self):
+    def test01_tuples_search(self):
         """
         Tests the tuple search functions.
         """
@@ -66,7 +66,7 @@ class GeomTest(unittest.TestCase):
         self.assertEqual(tuples.rfind_tup((1,2,2,1,1,3),2,0,2),1)
         self.assertEqual(tuples.rfind_tup((1,2,2,1,1,3),2,0,1),-1)
     
-    def test_tuples_replace(self):
+    def test02_tuples_replace(self):
         """
         Tests the tuple replace function.
         """

@@ -31,7 +31,7 @@ class _TK_Thread(threading.Thread):
     #   _root   : The Tkinter root
 
     # The refresh rate in milliseconds
-    REFRESH = 15
+    REFRESH = 30
 
     def __init__(self,context):
         """

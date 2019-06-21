@@ -118,7 +118,6 @@ def read_csv(filename):
             message = 'CSV file %s has invalid row at %d' % (repr(filename),mismatch[0])
         else:
             message = 'CSV file %s is empty' % repr(filename)
-        file.close()
     except FileNotFoundError:
         message = 'CSV file %s does not exist' % repr(filename)
     except Exception as e:

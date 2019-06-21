@@ -42,7 +42,7 @@ class GeomTest(unittest.TestCase):
         """
         pass
     
-    def test_tuple2_basics(self):
+    def test01_tuple2_basics(self):
         """
         Tests the initialization and basic methods of the Tuple2 type.
         """
@@ -97,7 +97,7 @@ class GeomTest(unittest.TestCase):
         self.assertEqual(first,forth)
         self.assertIsNot(first,forth)
     
-    def test_tuple2_asserts(self):
+    def test02_tuple2_asserts(self):
         """
         Tests the precondition enforcement of the Tuple2 type.
         """
@@ -108,7 +108,7 @@ class GeomTest(unittest.TestCase):
         self.assertRaises(AssertionError,geom.tuple.Tuple2.x.__set__,item,'1')
         self.assertRaises(AssertionError,geom.tuple.Tuple2.y.__set__,item,'1')
     
-    def test_tuple2_arithmetic(self):
+    def test03_tuple2_arithmetic(self):
         """
         Tests the arithmetic methods of the Tuple2 type.
         """
@@ -143,7 +143,7 @@ class GeomTest(unittest.TestCase):
         first.interpolate(secnd,0.5)
         self.assertEqual(first,geom.tuple.Tuple2(1.5,2.0))
     
-    def test_tuple3_basics(self):
+    def test04_tuple3_basics(self):
         """
         Tests the initialization and basic methods of the Tuple3 type.
         """
@@ -207,7 +207,7 @@ class GeomTest(unittest.TestCase):
         self.assertEqual(first,forth)
         self.assertIsNot(first,forth)
     
-    def test_tuple3_asserts(self):
+    def test05_tuple3_asserts(self):
         """
         Tests the precondition enforcement of the Tuple3 type.
         """
@@ -220,7 +220,7 @@ class GeomTest(unittest.TestCase):
         self.assertRaises(AssertionError,geom.tuple.Tuple3.y.__set__,item,'1')
         self.assertRaises(AssertionError,geom.tuple.Tuple3.z.__set__,item,'1')
     
-    def test_tuple3_arithmetic(self):
+    def test06_tuple3_arithmetic(self):
         """
         Tests the arithmetic methods of the Tuple3 type.
         """
@@ -255,7 +255,7 @@ class GeomTest(unittest.TestCase):
         first.interpolate(secnd,0.5)
         self.assertEqual(first,geom.tuple.Tuple3(1.5,2.0,0.0))
     
-    def test_point2(self):
+    def test07_point2(self):
         """
         Tests the initialization and basic methods of the Point2 type.
         """
@@ -280,7 +280,7 @@ class GeomTest(unittest.TestCase):
         self.assertAlmostEqual(first.distance2(secnd),21.25)
         self.assertAlmostEqual(first.distance(secnd),4.6097722)
     
-    def test_point3(self):
+    def test08_point3(self):
         """
         Tests the initialization and basic methods of the Point3 type.
         """
@@ -309,7 +309,7 @@ class GeomTest(unittest.TestCase):
         fifth = geom.Point(0,0,0)
         self.assertEqual(first.__class__,fifth.__class__)
     
-    def test_vector2_basics(self):
+    def test09_vector2_basics(self):
         """
         Tests the initialization and basic methods of the Vector2 type.
         """
@@ -337,7 +337,7 @@ class GeomTest(unittest.TestCase):
         fifth = geom.Vector2(-0.7071068,0.7071068)
         self.assertTrue(fifth.isUnit())
     
-    def test_vector2_linear(self):
+    def test10_vector2_linear(self):
         """
         Tests the linear algebra methods of the Vector2 type.
         """
@@ -384,7 +384,7 @@ class GeomTest(unittest.TestCase):
         third = first.copy(); third.project(first)
         self.assertEqual(third,first)
     
-    def test_vector3_basics(self):
+    def test11_vector3_basics(self):
         """
         Tests the initialization and basic methods of the Vector3 type.
         """
@@ -413,7 +413,7 @@ class GeomTest(unittest.TestCase):
         self.assertEqual(first.__class__,fifth.__class__)
         self.assertTrue(fifth.isUnit())
     
-    def test_vector3_linear(self):
+    def test12_vector3_linear(self):
         """
         Tests the linear algebra methods of the Vector3 type.
         """
@@ -454,7 +454,7 @@ class GeomTest(unittest.TestCase):
         third = first.copy(); third.project(first)
         self.assertEqual(third,first)
     
-    def test_matrix_basics(self):
+    def test13_matrix_basics(self):
         """
         Tests the initialization and basic methods of the Matrix type.
         """
@@ -503,7 +503,7 @@ class GeomTest(unittest.TestCase):
         fifth.scale(2,3,4)
         self.assertEqual(secnd*third*forth,fifth)
     
-    def test_matrix_inversion(self):
+    def test14_matrix_inversion(self):
         """
         Tests the inversion methods of the Matrix type.
         """
@@ -565,7 +565,7 @@ class GeomTest(unittest.TestCase):
         self.assertEqual(first,secnd)
         self.assertEqual(first,third.inverse())
     
-    def test_matrix_transforms(self):
+    def test15_matrix_transforms(self):
         """
         Tests the transformation methods of the Matrix type.
         """

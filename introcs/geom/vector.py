@@ -121,14 +121,15 @@ class Vector2(Tuple2):
         """
         Determines whether or not this object is 'close enough' to a unit vector.
         
-        A unit vector is one that has length 1. This method uses ``numpy`` to test whether
-        the lenght is  "close enough", and does not require exact equuivalence.
+        A unit vector is one that has length 1. This method uses :meth:`~testcase.allclose` 
+        to test whether the coordinates are "close enough". It does not require exact 
+        equivalence.
         
         :return: True if this object is 'close enough' to a unit vector; False otherwise
         :rtype:  ``bool``
         """
-        import numpy
-        return numpy.allclose([self.length2()],[1])
+        from ..testcase import allclose
+        return allclose([self.length2()],[1])
     
     def normal(self):
         """
@@ -441,14 +442,15 @@ class Vector3(Tuple3):
         """
         Determines whether or not this object is 'close enough' to a unit vector.
         
-        A unit vector is one that has length 1. This method uses ``numpy`` to test whether
-        the lenght is  "close enough", and does not require exact equuivalence.
+        A unit vector is one that has length 1. This method uses :meth:`~testcase.allclose` 
+        to test whether the coordinates are "close enough". It does not require exact 
+        equivalence.
         
         :return: True if this object is 'close enough' to a unit vector; False otherwise
         :rtype:  ``bool``
         """
-        import numpy
-        return numpy.allclose([self.length2()],[1])
+        from ..testcase import allclose
+        return allclose([self.length2()],[1])
     
     def normal(self):
         """
@@ -491,15 +493,15 @@ class Vector3(Tuple3):
         :rtype:  ``float``
         """
         assert (isinstance(other, Vector3)), "%s is not a valid vector" % repr(other)
+        from ..testcase import isclose
         import math
-        import numpy
         
         dx = self.y * other.z - self.z * other.y;
         dy = self.z * other.x - self.x * other.z;
         dz = self.x * other.y - self.y * other.x;
         dc = math.sqrt(dx * dx + dy * dy + dz * dz);
         
-        angle = 0.0 if numpy.allclose([dc],[0]) else math.atan2(dc, self.dot(other))
+        angle = 0.0 if isclose(dc,0) else math.atan2(dc, self.dot(other))
         return angle
     
     def dot(self,other):
@@ -606,9 +608,9 @@ Vector = Vector3
 Vector2.__eq__.__doc__ = """
     Compares this point with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.  Equivalence also requires type
-    equivalence.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats. Equivalence also 
+    requires type equivalence.
     
     :param other: The object to check
     :type other:  ``any``
@@ -620,8 +622,8 @@ Vector2.__eq__.__doc__ = """
 Vector2.__ne__.__doc__ = """
     Compares this object with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :param other: The object to check
     :type other:  ``any``
@@ -748,8 +750,8 @@ Vector2.over.__doc__ = """
 Vector2.isZero.__doc__ = """
     Determines whether or not this object is 'close enough' to the origin.
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :return: True if this object is 'close enough' to the origin; False otherwise
     :rtype:  ``bool``
@@ -828,9 +830,9 @@ Vector2.clamp.__doc__ = """
 Vector3.__eq__.__doc__ = """
     Compares this point with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.  Equivalence also requires type
-    equivalence.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats. Equivalence also 
+    requires type equivalence.
     
     :param other: The object to check
     :type other:  ``any``
@@ -842,8 +844,8 @@ Vector3.__eq__.__doc__ = """
 Vector3.__ne__.__doc__ = """
     Compares this object with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :param other: The object to check
     :type other:  ``any``
@@ -970,8 +972,8 @@ Vector3.over.__doc__ = """
 Vector3.isZero.__doc__ = """
     Determines whether or not this object is 'close enough' to the origin.
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :return: True if this object is 'close enough' to the origin; False otherwise
     :rtype:  ``bool``

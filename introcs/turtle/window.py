@@ -345,7 +345,6 @@ class Window(object):
             traceback.print_exc()
             pass
 
-
     def dispose(self):
         """
         Closes the graphics Window, deleting all assets.
@@ -365,7 +364,7 @@ class Window(object):
             self._refreshed = True
 
         _Context.Instance().refresh()
-
+        s
         # This operation MUST block when asynchonous
         try:
             while self._refreshed:
@@ -373,8 +372,6 @@ class Window(object):
         except:
             traceback.print_exc()
             pass
-
-
 
     def iconify(self):
         """

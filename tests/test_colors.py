@@ -42,7 +42,7 @@ class ColorTest(unittest.TestCase):
         """
         pass
     
-    def test_rgb_basics(self):
+    def test01_rgb_basics(self):
         """
         Tests the initialization and methods of the RGB type.
         """
@@ -81,7 +81,7 @@ class ColorTest(unittest.TestCase):
         color.alpha = 128
         self.assertEqual(color.alpha, 128)
     
-    def test_rgb_asserts(self):
+    def test02_rgb_asserts(self):
         """
         Tests the precondition enforcement of the RGB type.
         """
@@ -120,7 +120,7 @@ class ColorTest(unittest.TestCase):
         self.assertRaises(AssertionError,colors.RGB.alpha.__set__,color,128.5)
         self.assertRaises(AssertionError,colors.RGB.alpha.__set__,color,'128')
     
-    def test_rgb_statics(self):
+    def test03_rgb_statics(self):
         """
         Tests the static constructors of the RGB type.
         """
@@ -169,7 +169,7 @@ class ColorTest(unittest.TestCase):
         self.assertRaises(AssertionError,colors.RGB.CreateWebColor, '#ffffffff')
         self.assertRaises(AssertionError,colors.RGB.CreateWebColor, '#ffxyzw')
     
-    def test_cmyk_basics(self):
+    def test04_cmyk_basics(self):
         """
         Tests the initialization and methods of the CMYK type.
         """
@@ -201,7 +201,7 @@ class ColorTest(unittest.TestCase):
         color.black = 45.5
         self.assertEqual(color.black,   45.5)
 
-    def test_cmyk_asserts(self):
+    def test05_cmyk_asserts(self):
         """
         Tests the precondition enforcement of the CMYK type.
         """
@@ -235,7 +235,7 @@ class ColorTest(unittest.TestCase):
         self.assertRaises(AssertionError,colors.CMYK.black.__set__,color,  -1)
         self.assertRaises(AssertionError,colors.CMYK.black.__set__,color,'50')
     
-    def test_hsv_basics(self):
+    def test06_hsv_basics(self):
         """
         Tests the initialization and methods of the HSV type.
         """
@@ -289,7 +289,7 @@ class ColorTest(unittest.TestCase):
         color.value = 0.2
         self.assertEqual(color.value,  0.2)
     
-    def test_hsv_asserts(self):
+    def test07_hsv_asserts(self):
         """
         Tests the precondition enforcement of the HSV type.
         """

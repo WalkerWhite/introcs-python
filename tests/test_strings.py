@@ -9,7 +9,7 @@ import numpy
 from introcs import strings
 
 
-class GeomTest(unittest.TestCase):
+class StringTest(unittest.TestCase):
     """
     Unit test for the strings package
     """
@@ -26,7 +26,7 @@ class GeomTest(unittest.TestCase):
         """
         pass
     
-    def test_strings_test(self):
+    def test01_strings_checks(self):
         """
         Tests the boolean string functions..
         """
@@ -40,7 +40,7 @@ class GeomTest(unittest.TestCase):
             self.assertEqual(strings.isspace(c),c.isspace())
             self.assertEqual(strings.isupper(c),c.isupper())
     
-    def test_strings_case(self):
+    def test02_strings_case(self):
         """
         Tests the boolean string case functions.
         """
@@ -50,7 +50,7 @@ class GeomTest(unittest.TestCase):
             self.assertEqual(strings.lower(c),c.lower())
             self.assertEqual(strings.upper(c),c.upper())
     
-    def test_strings_format(self):
+    def test03_strings_format(self):
         """
         Tests the string formatting functions.
         """
@@ -61,7 +61,7 @@ class GeomTest(unittest.TestCase):
                     self.assertEqual(strings.ljust(c,w,f),c.ljust(w,f))
                     self.assertEqual(strings.rjust(c,w,f),c.rjust(w,f))
     
-    def test_strings_replace(self):
+    def test04_strings_replace(self):
         """
         Tests the string replacement functions.
         """
@@ -74,7 +74,7 @@ class GeomTest(unittest.TestCase):
             self.assertEqual(strings.lstrip(c),c.lstrip())
             self.assertEqual(strings.rstrip(c),c.rstrip())
     
-    def test_strings_search(self):
+    def test05_strings_search(self):
         """
         Tests the string search functions.
         """
@@ -95,8 +95,7 @@ class GeomTest(unittest.TestCase):
         self.assertRaises(ValueError,strings.rindex_str,'pool','x')
         self.assertRaises(ValueError,strings.index_str,'pool','x')
     
-    
-    def test_strings_split(self):
+    def test06_strings_split(self):
         """
         Tests the split and join string functions.
         """

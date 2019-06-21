@@ -23,7 +23,10 @@ def urlread(url):
     :rtype:  ``str``
     """
     import urllib.request
-    connect = urllib.request.urlopen(url)
+    import ssl
+    # The fact that an "hidden" function is recommended by a PEP is a crime
+    gcontext = ssl._create_unverified_context()
+    connect = urllib.request.urlopen(url,context=gcontext)
     header  = connect.info()
     payload = connect.read()
     try:
@@ -61,7 +64,10 @@ def urlinfo(url):
     :rtype:  ``dict``
     """
     import urllib.request
-    connect = urllib.request.urlopen(url)
+    import ssl
+    # The fact that an "hidden" function is recommended by a PEP is a crime
+    gcontext = ssl._create_unverified_context()
+    connect = urllib.request.urlopen(url,context=gcontext)
     header  = connect.info()
     result = {}
     for item in header.raw_items():

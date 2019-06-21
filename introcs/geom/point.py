@@ -275,9 +275,9 @@ Point = Point3
 Point2.__eq__.__doc__ = """
     Compares this point with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.  Equivalence also requires type
-    equivalence.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats. Equivalence also 
+    requires type equivalence.
     
     :param other: The object to check
     :type other:  ``any``
@@ -289,8 +289,8 @@ Point2.__eq__.__doc__ = """
 Point2.__ne__.__doc__ = """
     Compares this object with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :param other: The object to check
     :type other:  ``any``
@@ -417,8 +417,8 @@ Point2.over.__doc__ = """
 Point2.isZero.__doc__ = """
     Determines whether or not this object is 'close enough' to the origin.
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :return: True if this object is 'close enough' to the origin; False otherwise
     :rtype:  ``bool``
@@ -498,9 +498,9 @@ Point2.clamp.__doc__ = """
 Point3.__eq__.__doc__ = """
     Compares this point with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.  Equivalence also requires type
-    equivalence.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats. Equivalence also 
+    requires type equivalence.
     
     :param other: The object to check
     :type other:  ``any``
@@ -512,8 +512,8 @@ Point3.__eq__.__doc__ = """
 Point3.__ne__.__doc__ = """
     Compares this object with ``other`` 
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :param other: The object to check
     :type other:  ``any``
@@ -640,8 +640,8 @@ Point3.over.__doc__ = """
 Point3.isZero.__doc__ = """
     Determines whether or not this object is 'close enough' to the origin.
     
-    This method uses ``numpy`` to test whether the coordinates are  "close enough".  
-    It does not require exact equality for floats.
+    This method uses :meth:`~testcase.allclose` to test whether the coordinates are 
+    "close enough". It does not require exact equality for floats.
     
     :return: True if this object is 'close enough' to the origin; False otherwise
     :rtype:  ``bool``

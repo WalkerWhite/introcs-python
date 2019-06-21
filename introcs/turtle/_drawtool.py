@@ -323,7 +323,7 @@ class _DrawTool(object):
         :type speed:  ``int`` 0..10
         """
         from .window import Window
-        assert isinstance(screen,Window), "$s is not a Window object" % repr(screen)
+        assert isinstance(screen,Window), "%s is not a Window object" % repr(screen)
         assert (type(speed) == int), "%s is not an int" % repr(speed)
         assert (self._is_valid_color(edge)), "%s is not a valid color input" % repr(edge)
         assert (self._is_valid_color(fill)), "%s is not a valid color input" % repr(fill)
@@ -560,6 +560,7 @@ class _DrawTool(object):
 
             length  = v.length()
             perstep = length if self._speed in [0,10] else 2 ** (self._speed-1)
+            perstep = perstep if perstep else 1
             stepcnt = math.ceil(length/perstep)
             for x in range(0,stepcnt):
                 factor = min((x+1)*perstep/length,1)
@@ -617,7 +618,8 @@ class _DrawTool(object):
 
         start = kw['start'] if 'start' in kw else 0.0
         extnt = kw['extent'] if 'extent' in kw else 0.0
-        perstep = length if self._speed in [0,10] else 2 ** (self._speed-1)
+        perstep = extnt if self._speed in [0,10] else 2 ** (self._speed-1)
+        perstep = perstep if perstep else 1
         stepcnt = math.ceil(extnt/perstep)
         for x in range(0,stepcnt):
             angle = min((x+1)*perstep,extnt)
