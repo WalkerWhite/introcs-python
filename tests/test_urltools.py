@@ -17,20 +17,20 @@ class UrlToolsTest(unittest.TestCase):
     """
     Unit test for the url tools package
     """
-    
+
     def setUp(self):
         """
         Initializes a unit test (UNUSED)
         """
         pass
-    
+
     def tearDown(self):
         """
         Completes a unit test (UNUSED)
         """
         pass
-    
-    def test_urlread(self):
+
+    def test01_urlread(self):
         """
         Tests the urlread function.
         """
@@ -40,18 +40,18 @@ class UrlToolsTest(unittest.TestCase):
         match  = pattern.search(result)
         self.assertTrue(match)
         self.assertEqual(match['title'],'Gutenberg')
-        
+
         result = urltools.urlread('http://www.google.com')
         match  = pattern.search(result)
         self.assertEqual(match['title'],'Google')
-    
-    def test_urlread(self):
+
+    def test02_urlinfo(self):
         """
         Tests the urlinfo function.
         """
         result = urltools.urlinfo('http://www.gutenberg.org')
         self.assertEqual(result['Content-Type'],'text/html; charset=UTF-8')
-        
+
         # Why Google, Why?
         result = urltools.urlinfo('http://www.google.com')
         self.assertEqual(result['Content-Type'],'text/html; charset=ISO-8859-1')
@@ -59,4 +59,3 @@ class UrlToolsTest(unittest.TestCase):
 
 if __name__=='__main__':
   unittest.main( )
-

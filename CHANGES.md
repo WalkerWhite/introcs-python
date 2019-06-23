@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.1.1: Grading Support
+
+* Added experimental `modlib` module (unexposed)
+* Reverted to wheel over egg
+
 ## Version 1.1: eCornell Release
 
 * `testcase` functions now support custom error messages
