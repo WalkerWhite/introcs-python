@@ -10,9 +10,9 @@ Unit Test Functions
 
 ``import introcs``
 
-These functions provides simple unit testing tools.  They is a replacement for the 
+These functions provides simple unit testing tools.  They are a replacement for the 
 built-in Python package ``unittest``, which is much less user friendly and requires an 
-understanding of object-oriented programming. If students are writing test cases from
+understanding of object-oriented programming. If students are not writing test cases from
 the beginning, you are doing it wrong.
 
 Type Checking
@@ -73,6 +73,10 @@ assert_float_lists_equal
 assert_float_lists_not_equal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: assert_float_lists_not_equal
+
+assert_error
+^^^^^^^^^^^^
+.. autofunction:: assert_error
 
 .. toctree::
    :maxdepth: 2

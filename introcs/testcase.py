@@ -99,13 +99,13 @@ def allclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
     :type b:  sequence
     
     :param rtol: The relative tolerance parameter (Optional).
-    :type rtol:  ``float```
+    :type rtol:  ``float``
     
     :param atol: The absolute tolerance parameter (Optional).
-    :type atol: ``float```
+    :type atol: ``float``
     
     :param equal_nan: Whether to compare NaN’s as equal (Optional).
-    :type equal_nan:  ``bool```
+    :type equal_nan:  ``bool``
     """
     if type(a) in [float,int] and type(b) in [float,int]:
         return abs(a-b) <= atol + rtol * abs(b)
@@ -165,13 +165,13 @@ def isclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
     :type b:  number or sequence
     
     :param rtol: The relative tolerance parameter (Optional).
-    :type rtol:  ``float```
+    :type rtol:  ``float``
     
     :param atol: The absolute tolerance parameter (Optional).
-    :type atol:  ``float```
+    :type atol:  ``float``
     
     :param equal_nan: Whether to compare NaN’s as equal (Optional).
-    :type equal_nan:  ``bool```
+    :type equal_nan:  ``bool``
     
     :return: a boolean or sequence comparing to inputs element-wise
     :rtype: ``bool`` or sequence 
@@ -315,14 +315,14 @@ def assert_equals(expected,received,message=None):
     If there is no custom error message, this function will print some minimal debug
     information. The following is an example debug message::
         
-        assert_equals expected 'yes' but instead got 'no'
+        assert_equals: expected 'yes' but instead got 'no'
     
     :param expected: The value you expect the test to have
     
     :param received: The value the test actually had
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     if (expected != received):
         if message is None:
@@ -341,14 +341,14 @@ def assert_not_equals(expected,received,message=None):
     If there is no custom error message, this function will print some minimal debug
     information. The following is an example debug message::
         
-        assert_not_equals expected something different from 'n' 
+        assert_not_equals: expected something different from 'n' 
     
     :param expected: The value you expect the test to have
     
     :param received: The value the test actually had
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     if (expected == received):
         if message is None:
@@ -363,12 +363,12 @@ def assert_true(received,message=None):
     If there is no custom error message, this function will print some minimal debug
     information. The following is an example debug message::
         
-        assert_true expected True but instead got False
+        assert_true: expected True but instead got False
     
     :param received: The value the test actually had
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     if (not received):
         if message is None:
@@ -383,12 +383,12 @@ def assert_false(received,message=None):
     If there is no custom error message, this function will print some minimal debug
     information. The following is an example debug message::
         
-        assert_false expected False but instead got True
+        assert_false: expected False but instead got True
     
     :param received: The value the test actually had
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     if (received):
         if message is None:
@@ -424,7 +424,7 @@ def assert_floats_equal(expected, received,message=None):
     :type received:  ``float``
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     number = [float, int]  # list of number types
     if type(expected) not in number:
@@ -471,7 +471,7 @@ def assert_floats_not_equal(expected, received,message=None):
     :type received:  ``float``
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     number = [float, int]  # list of number types
     if type(expected) not in number:
@@ -500,7 +500,7 @@ def _check_nested_floats(thelist):
     this function returns false.
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     result = True
     for item in thelist:
@@ -546,7 +546,7 @@ def assert_float_lists_equal(expected, received,message=None):
     :type received:  ``list`` or ``tuple``
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     error = True
     if not type(expected) in [list,tuple]:
@@ -623,7 +623,7 @@ def assert_float_lists_not_equal(expected, received,message=None):
     :type received:  ``list`` or ``tuple``
     
     :param message: A custom error message (OPTIONAL)
-    :type message: `str`
+    :type message: ``str``
     """
     error = True
     if not type(expected) in [list,tuple]:
@@ -661,4 +661,56 @@ def assert_float_lists_not_equal(expected, received,message=None):
     
     if error:
         quit_with_error(message)
+
+
+def assert_error(func,*args,error=AssertionError,message=None):
+    """
+    Quits if call func(\*args) does not crash with the given error.
     
+    This function calls func(\*args) and checks whether it crashes with the given error 
+    (AssertionError by default).  If the call does not crash, or crashes with a different 
+    error, this function will quit with an error message.
+    
+    If there is no custom error message, this function will print some minimal debug
+    information. The following is an example debug message::
+        
+        assert_error: call foo(1) did not crash but instead returned 42
+    
+    or also::
+        
+        assert_error: call foo(1) crashed with TypeError, not AssertionError
+    
+    :param func: The function to test for enforcement
+    :type func:  ``callable``
+    
+    :param args: The function arguments
+    :type args:  ``tuple``
+    
+    :param error: The expected error type (OPTIONAL)
+    :type error:  ``class``
+    
+    :param message: A custom error message (OPTIONAL)
+    :type message: ``str``
+    """
+    failed = True
+    if not callable(func):
+        if message is None:
+            message = ('assert_error: argument %s is not callable' % repr(func))
+    else:
+        try:
+            result = func(*args)
+            if message is None:
+                body = repr(args) if len(args) != 1 else '(%s)' % repr(args[0])
+                message = ('assert_error: call %s%s did not crash but instead returned %s' % (func.__name__, body, repr(result)))
+        except BaseException as e:
+            if e.__class__ == error:
+                failed = False
+            elif message is None:
+                name1 = e.__class__.__name__
+                name2 = error.__name__
+                body = repr(args) if len(args) != 1 else '(%s)' % repr(args[0])
+                message = ('assert_error: call %s%s crashed with %s, not %s' % (func.__name__, body, name1, name2))
+    
+    if failed:
+        quit_with_error(message)
+

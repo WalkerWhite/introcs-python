@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'introcs'
-copyright = '2018, Walker M. White'
+copyright = '2019, Walker M. White'
 author = 'Walker M. White'
 
 # The short X.Y version

@@ -318,7 +318,109 @@ class UnitTestTest(unittest.TestCase):
         self.assertEqual(self._outp[1][:8],'Line 315')
         self.clear()
     
-    def test06_messages(self):
+    def test06_asserts_error(self):
+        """
+        Tests the enforcement assertion
+        """
+        
+        # Basic enforcement
+        def func1(s):
+            assert type(s) == str
+            assert s != ''
+            return s[0]
+        
+        # Enforced with other errors
+        def func2(s):
+            if type(s) != str:
+                raise TypeError()
+            if s == '':
+                raise ValueError()
+            return s[0]
+        
+        # Multiple arguments
+        def func3(x,y):
+            assert type(x) == int
+            assert type(y) == int
+            return x/y
+        
+        
+        self._test.assert_error(1,2)  # Pay attention to the line number
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: argument 1 is not callable")
+        self.assertEqual(self._outp[1][:8],'Line 347')
+        self.clear()
+        
+        self._test.assert_error(func1,'a')  # Pay attention to the line number
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func1('a') did not crash but instead returned 'a'")
+        self.assertEqual(self._outp[1][:8],'Line 353')
+        self.clear()
+        
+        self._test.assert_error(func1,2)
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func1,'')
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func2,'a')
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func2('a') did not crash but instead returned 'a'")
+        self.assertEqual(self._outp[1][:8],'Line 367')
+        self.clear()
+        
+        self._test.assert_error(func2,2)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func2(2) crashed with TypeError, not AssertionError")
+        self.assertEqual(self._outp[1][:8],'Line 373')
+        self.clear()
+        
+        self._test.assert_error(func2,2,error=TypeError)
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func2,'',error=TypeError)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func2('') crashed with ValueError, not TypeError")
+        self.assertEqual(self._outp[1][:8],'Line 383')
+        self.clear()
+        
+        self._test.assert_error(func2,'',error=ValueError)
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func3,3,2)  # Pay attention to the line number
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func3(3, 2) did not crash but instead returned 1.5")
+        self.assertEqual(self._outp[1][:8],'Line 393')
+        self.clear()
+        
+        self._test.assert_error(func3,3.0,2)
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func3,3.0,2,error=TypeError)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func3(3.0, 2) crashed with AssertionError, not TypeError")
+        self.assertEqual(self._outp[1][:8],'Line 403')
+        self.clear()
+        
+        self._test.assert_error(func3,3,2.0)
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func3,3,0)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: call func3(3, 0) crashed with ZeroDivisionError, not AssertionError")
+        self.assertEqual(self._outp[1][:8],'Line 413')
+        self.clear()
+        
+        self._test.assert_error(func3,3,0,error=ZeroDivisionError)
+        self.assertFalse(self.isquit())
+        self.clear()
+    
+    def test07_messages(self):
         """
         Tests the custom assert messages
         """
@@ -372,6 +474,29 @@ class UnitTestTest(unittest.TestCase):
         
         message = 'Test9'
         self._test.assert_float_lists_not_equal([1,2],[1.000001,2], message)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),message)
+        self.clear()
+        
+        def func3(x,y):
+            assert type(x) == int
+            assert type(y) == int
+            return x/y
+        
+        message = 'Test9'
+        self._test.assert_error(1,2,message=message)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),message)
+        self.clear()
+        
+        message = 'Test10'
+        self._test.assert_error(func3,3,2,message=message)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),message)
+        self.clear()
+        
+        message = 'Test11'
+        self._test.assert_error(func3,3,0,message=message)
         self.assertTrue(self.isquit())
         self.assertEqual(self._outp[0].strip(),message)
         self.clear()

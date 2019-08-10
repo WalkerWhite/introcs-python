@@ -41,7 +41,7 @@ def fix_args(string):
     """
     # Hide default values
     defs = re.compile('<span class="sig-paren">\(</span>(?P<args>[^\)]*)<span class="sig-paren">\)</span>')
-    opts = re.compile('<em>(?P<var>[^=<]*)=(?P<val>[^<]*)</em>')
+    opts = re.compile('<em class="sig-param">(?P<var>[^=<]*)=(?P<val>[^<]*)</em>')
     
     prefix = ''
     remain = string
