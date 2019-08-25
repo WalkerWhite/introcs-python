@@ -24,6 +24,7 @@ def fix(filename):
     f.close()
     
     string = fix_args(string)
+    string = fix_assert_error(string)
     string = fix_attributes(string)
     string = fix_methods(string)
     
@@ -67,6 +68,23 @@ def fix_args(string):
         remain = remain[match.end(0):]
         match = defs.search(remain)
     return prefix+remain
+
+
+def fix_assert_error(string):
+    defs = re.compile('<code class="sig-name descname">assert_error</code><span class="sig-paren">\(</span>(?P<args>[^\)]*)<span class="sig-paren">\)</span>')
+    prefix = ''
+    remain = string
+    match = defs.search(remain)
+    while match:
+        prefix += remain[:match.start(1)]
+        prefix += '<em class="sig-param">func</em>, <em class="sig-param">*args</em>, <em class="sig-param">error=AssertionError</em>, <em class="sig-param">reason=None</em>,<br/>'
+        prefix += '<span style="padding-left:11.6em" /><em class="sig-param">message=None</em>'
+        prefix += remain[match.end(1):match.end(0)]
+        remain = remain[match.end(0):]
+        match = defs.search(remain)
+    
+    return prefix+remain
+    
 
 
 def fix_attributes(string):

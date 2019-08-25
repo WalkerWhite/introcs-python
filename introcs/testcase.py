@@ -663,7 +663,7 @@ def assert_float_lists_not_equal(expected, received,message=None):
         quit_with_error(message)
 
 
-def assert_error(func,*args,error=AssertionError,message=None):
+def assert_error(func,*args,error=AssertionError,reason=None,message=None):
     """
     Quits if call func(\*args) does not crash with the given error.
     
@@ -671,7 +671,14 @@ def assert_error(func,*args,error=AssertionError,message=None):
     (AssertionError by default).  If the call does not crash, or crashes with a different 
     error, this function will quit with an error message.
     
-    If there is no custom error message, this function will print some minimal debug
+    The optional argument reason checks against the ``args`` attribute of the error 
+    (i.e. the error reason), provided that it is not None. If reason is a tuple, it 
+    will compare the value to args using ==.  Otherwise, if it is any type other than 
+    None, it will compare against the first element of ``args``.
+    
+    The optional argument message is for the error message to print should this 
+    function fail (i.e. it is not the error "message" of the error being tested). If 
+    there is no custom error message, this function will print some minimal debug
     information. The following is an example debug message::
         
         assert_error: call foo(1) did not crash but instead returned 42
@@ -689,6 +696,9 @@ def assert_error(func,*args,error=AssertionError,message=None):
     :param error: The expected error type (OPTIONAL)
     :type error:  ``class``
     
+    :param reason: The expected error reason (OPTIONAL)
+    :type reason:  any
+    
     :param message: A custom error message (OPTIONAL)
     :type message: ``str``
     """
@@ -705,6 +715,22 @@ def assert_error(func,*args,error=AssertionError,message=None):
         except BaseException as e:
             if e.__class__ == error:
                 failed = False
+                if type(reason) == tuple:
+                    if reason != e.args:
+                        failed = True
+                        if message is None:
+                            name = e.__class__.__name__
+                            message = ('assert_error: %s has reason %s, not %s' % (name, repr(e.args), repr(reason)))
+                elif not reason is None: 
+                    if len(e.args) == 0 or reason != e.args[0]:
+                        failed = True
+                        if message is None:
+                            name = e.__class__.__name__
+                            if len(e.args) == 0:
+                                message = ('assert_error: %s has no reason, but expected %s' % (name, repr(reason)))
+                            else:
+                                payload = e.args[0] if len(e.args) == 1 else e.args
+                                message = ('assert_error: %s has reason %s, not %s' % (name, repr(payload), repr(reason)))
             elif message is None:
                 name1 = e.__class__.__name__
                 name2 = error.__name__

@@ -364,7 +364,6 @@ class Window(object):
             self._refreshed = True
 
         _Context.Instance().refresh()
-        s
         # This operation MUST block when asynchonous
         try:
             while self._refreshed:

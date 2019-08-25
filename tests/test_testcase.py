@@ -334,12 +334,12 @@ class UnitTestTest(unittest.TestCase):
             if type(s) != str:
                 raise TypeError()
             if s == '':
-                raise ValueError()
+                raise ValueError(1,3)
             return s[0]
         
         # Multiple arguments
         def func3(x,y):
-            assert type(x) == int
+            assert type(x) == int, repr(x)+' is bad'
             assert type(y) == int
             return x/y
         
@@ -419,6 +419,40 @@ class UnitTestTest(unittest.TestCase):
         self._test.assert_error(func3,3,0,error=ZeroDivisionError)
         self.assertFalse(self.isquit())
         self.clear()
+        
+        self._test.assert_error(func2,2,error=TypeError,reason='a')
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: TypeError has no reason, but expected 'a'")
+        self.assertEqual(self._outp[1][:8],'Line 423')
+        self.clear()
+        
+        self._test.assert_error(func2,2,error=TypeError,reason=())
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func2,'',error=ValueError,reason=(1,3))
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func2,'',error=ValueError,reason='a')
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: ValueError has reason (1, 3), not 'a'")
+        self.assertEqual(self._outp[1][:8],'Line 437')
+        self.clear()
+        
+        self._test.assert_error(func3,'a',2,reason='a')
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),"assert_error: AssertionError has reason \"'a' is bad\", not 'a'")
+        self.assertEqual(self._outp[1][:8],'Line 443')
+        self.clear()
+        
+        self._test.assert_error(func3,True,2,reason='True is bad')
+        self.assertFalse(self.isquit())
+        self.clear()
+        
+        self._test.assert_error(func3,2,True,reason=())
+        self.assertFalse(self.isquit())
+        self.clear()
     
     def test07_messages(self):
         """
@@ -479,7 +513,7 @@ class UnitTestTest(unittest.TestCase):
         self.clear()
         
         def func3(x,y):
-            assert type(x) == int
+            assert type(x) == int, repr(x)+' is bad'
             assert type(y) == int
             return x/y
         
@@ -497,6 +531,24 @@ class UnitTestTest(unittest.TestCase):
         
         message = 'Test11'
         self._test.assert_error(func3,3,0,message=message)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),message)
+        self.clear()
+        
+        message = 'Test12'
+        self._test.assert_error(func3,True,0,error=TypeError,message=message)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),message)
+        self.clear()
+        
+        message = 'Test13'
+        self._test.assert_error(func3,True,0,reason=(),message=message)
+        self.assertTrue(self.isquit())
+        self.assertEqual(self._outp[0].strip(),message)
+        self.clear()
+        
+        message = 'Test14'
+        self._test.assert_error(func3,True,0,reason='a',message=message)
         self.assertTrue(self.isquit())
         self.assertEqual(self._outp[0].strip(),message)
         self.clear()

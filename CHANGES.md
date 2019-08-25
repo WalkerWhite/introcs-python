@@ -1,11 +1,16 @@
 # Change Log
 
+## Version 1.2.1: Turtle Fix
+
+* Fixed stray character that had somehow entered Turtle code
+* Added turtle test cases to prevent this happening in future
+
 ## Version 1.2: Fall 2019 releasee
 
 * Added `assert_error` to `testcase` for checking function asserts
 * Added code rewriting to `modlib` (still unexposed) to guard against infinite loops
 * Modified `Environment` in `modlib` to load from file or source string
-* Added feature to `Environment` to execute code as as a script (`__name__ == '__main__'`)
+* Added feature to `Environment` to execute code as a script (`__name__ == '__main__'`)
 
 ## Version 1.1.1: Grading Support
 
