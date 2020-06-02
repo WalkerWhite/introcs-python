@@ -503,7 +503,7 @@ class Turtle(_DrawTool):
         self._image.refresh()
         self._cursor = self._image.read()
         block = self._speed > 0
-        self._window._draw_icon(self,self._cursor,x,y,block=block)
+        self._window._draw_icon(self,self._cursor,self._x,self._y,block=block)
         self._mark = True
 
     def flush(self):
