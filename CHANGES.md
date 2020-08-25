@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.2.2: Window Fix
+
+* Fixed cursor positioning in window turtle
+
 ## Version 1.2.1: Turtle Fix
 
 * Fixed stray character that had somehow entered Turtle code
