@@ -1,5 +1,6 @@
 build
 dist
+PYPI.md
 *.egg-info
 **/__pycache__
 _local

@@ -30,7 +30,7 @@ def urlread(url):
     header  = connect.info()
     payload = connect.read()
     try:
-        return payload.decode('utf-8') # Yeah, no way that was going in A1
+        return payload.decode('utf8') # Yeah, no way that was going in A1
     except:
         # We need to find out what the encoding is
         encoding = ''

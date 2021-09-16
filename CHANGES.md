@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.2.3: Fall 2021 Hotfix
+
+* Fixed quit_with_error to raise SystemExit() rather than call quit()
+* Fixed an error with Unicode support in urltools
+
 ## Version 1.2.2: Window Fix
 
 * Fixed cursor positioning in window turtle

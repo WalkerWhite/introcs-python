@@ -533,23 +533,27 @@ class Window(object):
 
         _Context.Instance().refresh()
 
-    def _reset(self,tool):
+    def _reset(self,tool,refresh=True):
         """
         Deletes the full history of a tool.
 
         :param tool: the drawing tool
         :type tool:  ``_DrawTool``
+        
+        :param refresh: Whether to refresh the image immediately
+        :type refresh: ``bool``
         """
         with self._lock:
             if not tool._tkkey in self._drawtool:
                 raise AttachmentError('This drawing tool is no longer attached to its window')
             steps = len(self._history[tool._tkkey])
-
+        
         self._queue_command(None,None,(0,0),self._tk_internal_delete_history,[tool._tkkey,steps],{'block':False})
-        self._refreshed = True
-        self._mark = True
-
-        _Context.Instance().refresh()
+        
+        if refresh:
+            self._refreshed = True
+            self._mark = True
+            _Context.Instance().refresh()
 
     def _queue_command(self,key,icon,pos,cmd,args,kw):
         """

@@ -301,7 +301,7 @@ def quit_with_error(msg):
         suffix = ": "+frame[3]
     print('Line',repr(frame[1]),'of',frame[0] + suffix)
     print('Quitting with Error')
-    quit()
+    raise SystemExit()
 
 
 def assert_equals(expected,received,message=None):
