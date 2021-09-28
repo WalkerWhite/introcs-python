@@ -21,4 +21,5 @@ Classes
    
    color_rgb
    color_cmyk
+   color_hsl
    color_hsv

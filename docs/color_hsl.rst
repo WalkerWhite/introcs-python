@@ -5,36 +5,36 @@
 
 .. currentmodule:: introcs
 
-HSV
+HSL
 ===
 
 ``import introcs``
 
-This class represents an HSV color value.  As an additive color, it has conversion 
+This class represents an HSL color value.  As an additive color, it has conversion 
 methods for ``tkinter``, ``kivy`` and ``PIL``.  However, most of these methods require
 conversion to RGB color space before use.
 
-HSV colors are represented by a cone.  Pure color values such as red or green
-are positioned at the vertical top of the cone, with a ``value`` of 1.0.
+HSL colors are represented by a double cone.  Pure color values such as red or green
+are positioned at the vertical center of the cone, with a ``lightness`` value of 0.5.
 
 Constructor
 -----------
 
-.. autoclass:: HSV
+.. autoclass:: HSL
 
 Attributes
 ----------
 
-.. autoattribute:: HSV.hue
-.. autoattribute:: HSV.saturation
-.. autoattribute:: HSV.value
+.. autoattribute:: HSL.hue
+.. autoattribute:: HSL.saturation
+.. autoattribute:: HSL.lightness
 
 Methods
 -------
 
-.. automethod:: HSV.glColor
-.. automethod:: HSV.webColor
-.. automethod:: HSV.rgba
+.. automethod:: HSL.glColor
+.. automethod:: HSL.webColor
+.. automethod:: HSL.rgba
 
 .. toctree::
    :maxdepth: 2
