@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.3: Fall 2021 Color Assignment
+
+* Added HSL to the color models for a new activity
+
 ## Version 1.2.3: Fall 2021 Hotfix
 
 * Fixed quit_with_error to raise SystemExit() rather than call quit()

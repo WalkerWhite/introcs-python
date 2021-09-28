@@ -38,6 +38,25 @@ def _nearclamp(value,floor,ceil, epsilon=1e-13):
     return value
 
 
+def _hsl2hsv(h,s,l):
+    """
+    Returns the (normalized) HSV color equal to the given (normalized) HSL input.
+
+    :param h: the initial hue
+    :type h: ``float`` normalized to 0.0..1.0, not including 1.0
+    
+    :param s: the initial saturation 
+    :type s:  ``float`` 0.0..1.0
+    
+    :param l: the initial lightness
+    :type l:  ``float`` 0.0..1.0
+    """
+    hue = h
+    val = l+s*min(l,1-l)
+    sat = 0 if val == 0 else 2 - 2*l/val
+    return (hue,sat,val)
+
+
 class RGB(object):
     """
     An instance is a RGB color value.
@@ -537,6 +556,165 @@ class HSV(object):
         """
         import colorsys
         rgb = colorsys.hsv_to_rgb(self.hue/360.0,self.saturation,self.value)
+        rgb = tuple(map(lambda x : int(round(x*255)),rgb))
+        return '#%02x%02x%02x' % rgb
+
+
+class HSL(object):
+    """
+    An instance is a HSL color value.
+    
+    The ``hue`` range is not inclusive on the high end.  So 359.99999 is a valid hue, but
+    360.0 is not.  All other color values are inclusive.
+    """
+    
+    # MUTABLE ATTRIBUTES
+    @property
+    def hue(self):
+        """
+        The hue channel.
+        
+        **Invariant**: Value must be a float between 0.0 and 360.0, not including 360.0.
+        """
+        return self._hue
+    
+    @hue.setter
+    def hue(self, value):
+        assert (type(value) == int or type(value) == float), "value %s is not a number" % repr(value)
+        value = _nearclamp(value,0.0,None)
+        assert (value >= 0.0 and value < 360.0), "value %s is outside of range [0.0,360.0)" % repr(value)
+        self._hue = float(value)
+    
+    @property
+    def saturation(self):
+        """
+        The staturation channel.
+        
+        **Invariant**: Value must be a float between 0.0 and 1.0, inclusive.
+        """
+        return self._saturation
+    
+    @saturation.setter
+    def saturation(self, value):
+        assert (type(value) == int or type(value) == float), "value %s is not a number" % repr(value)
+        value = _nearclamp(value,0.0,1.0)
+        assert (value >= 0.0 and value <= 1.0), "value %s is outside of range [0.0,1.0]" % repr(value)
+        self._saturation = float(value)
+    
+    @property
+    def lightness(self):
+        """
+        The lightness channel.
+        
+        **Invariant**: Lightness must be a float between 0.0 and 1.0, inclusive.
+        """
+        return self._lightness
+    
+    @lightness.setter
+    def lightness(self, value):
+        assert (type(value) == int or type(value) == float), "value %s is not a number" % repr(value)
+        value = _nearclamp(value,0.0,1.0)
+        assert (value >= 0.0 and value <= 1.0), "value %s is outside of range [0.0,1.0]" % repr(value)
+        self._lightness = float(value)
+    
+    # BUILT-IN METHODS
+    def __init__(self, h, s, l):
+        """
+        :param h: the initial hue
+        :type h: ``float`` 0.0..360.0, not including 360.0
+        
+        :param s: the initial saturation 
+        :type s:  ``float`` 0.0..1.0
+        
+        :param l: the initial lightness
+        :type l:  ``float`` 0.0..1.0
+        """
+        self.hue = h
+        self.saturation = s
+        self.lightness = l
+    
+    def __eq__(self, other):
+        """
+        :return: True if self and ``other`` are equivalent HSV colors. 
+        :rtype:  ``bool``
+        
+        :param other: The object to check
+        """
+        return (type(other) == HSV and self.hue == other.hue and 
+                self.saturation == other.saturation and self.lightness == other.lightness)
+    
+    def __ne__(self, other):
+        """
+        :return: True if self and ``other`` are not equivalent HSV colors. 
+        :rtype:  ``bool``
+        
+        :param other: The object to check
+        """
+        return (type(other) != HSV or self.hue != other.hue or 
+                self.saturation != other.saturation or self.lightness != other.lightness)
+    
+    def __str__(self):
+        """
+        :return: A readable string representation of this color. 
+        :rtype:  ``bool``
+        """
+        return "("+str(self.hue)+","+str(self.saturation)+","+str(self.lightness)+")"
+    
+    def __repr__(self):
+        """
+        :return: An unambiguous string representation of this color. 
+        :rtype:  ``bool``
+        """
+        return "(hue="+str(self.hue)+",saturation="+str(self.saturation)+",lightness="+str(self.lightness)+")"
+    
+    
+    # PUBLIC METHODS
+    def glColor(self):
+        """
+        Converts thie color to an OpenGL value.
+        
+        This conversion allows this object to be used by graphics libraries that depend
+        on OpenGL (e.g. Kivy).  The conversion first converts this object to the RGB
+        color space.
+        
+        :return: a 4 element list of the attributes in the range 0 to 1
+        :rtype:  ``list``
+        """
+        import colorsys
+        hsv = _hsl2hsv(self.hue/360.0,self.saturation,self.lightness)
+        rgb = colorsys.hsv_to_rgb(*hsv)
+        return [rgb[0], rgb[1], rgb[2], 1.0]
+    
+    def rgba(self):
+        """
+        Converts this color to an rgba value.
+        
+        This conversion allows this object to be used by graphics libraries that want
+        integer color representation like PIL. The conversion first converts this object 
+        to the RGB color space.
+        
+        :return: a 4 element tuple of the attributes in the range 0 to 255
+        :rtype:  ``tuple``
+        """
+        import colorsys
+        hsv = _hsl2hsv(self.hue/360.0,self.saturation,self.lightness)
+        rgb = colorsys.hsv_to_rgb(*hsv)
+        return (int(round(rgb[0]*255)), int(round(rgb[1]*255)), int(round(rgb[2]*255)), 255)
+    
+    def webColor(self):
+        """
+        Converts this color to a web color string.
+        
+        This conversion allows this object to be used by graphics libraries that depend
+        on Tkinter (e.g. the drawing turtle). The conversion first converts this object 
+        to the RGB color space.
+        
+        :return: a string representing a web color
+        :rtype:  ``str``
+        """
+        import colorsys
+        hsv = _hsl2hsv(self.hue/360.0,self.saturation,self.lightness)
+        rgb = colorsys.hsv_to_rgb(*hsv)
         rgb = tuple(map(lambda x : int(round(x*255)),rgb))
         return '#%02x%02x%02x' % rgb
 
