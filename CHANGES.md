@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.3.1: Turtle Hotfix
+
+* Improved speed 0 performance on macOS for complex recursive shapes
+
 ## Version 1.3: Fall 2021 Color Assignment
 
 * Added HSL to the color models for a new activity

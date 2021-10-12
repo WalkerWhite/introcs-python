@@ -352,18 +352,21 @@ class Window(object):
         context = _Context.Instance()
         context.dealloc(self)
 
-    def flush(self):
+    def flush(self,block=True):
         """
         Displays any pending drawing commands on the screen.
-
+        
         This command is necessary when :class:`Turtle` or :class:`Pen` speed is set to 0.
         When that happens, the drawing tool will not force a refresh until this command is
         executed.
+        
+        :param block: Whether to block after a refresh
+        :type block: ``bool``
         """
         with self._lock:
             self._refreshed = True
 
-        _Context.Instance().refresh()
+        _Context.Instance().refresh(block)
         # This operation MUST block when asynchonous
         try:
             while self._refreshed:

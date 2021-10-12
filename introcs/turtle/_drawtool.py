@@ -506,15 +506,18 @@ class _DrawTool(object):
         """
         if not self._window:
             raise AttachmentError('This drawing tool is no longer attached to its window')
-
+        
         # This was suppressed during speed 0
+        block = self._speed > 0
         if self._ORIENTS:
             self._cursor = self._image.read(self._heading)
         else:
             self._cursor = self._image.read()
-        self._window._draw_icon(self,self._toolicon(),self._x,self._y)
-        self._window.flush()
-
+        self._window._draw_icon(self,self._toolicon(),self._x,self._y,block=block)
+        if self._speed == 0:
+            self._window.flush(False)
+        else:
+            self._window.flush()
 
     def _follow_line(self,coords,**kw):
         """

@@ -40,7 +40,7 @@ class _TK_Thread(threading.Thread):
         :param context: The application context communicating with this thread
         :type context:  ``_AsyncContext``
         """
-        super().__init__()
+        super().__init__(daemon=True)
         self._initd   = True
         self._active  = True
         self._context = context
@@ -86,6 +86,7 @@ class _TK_Thread(threading.Thread):
 
         self._root.after(self.REFRESH,self._poll)
         self._root.mainloop()
+        self._context.dispose()
         self._root.destroy()
 
     def dispose(self):
@@ -196,14 +197,17 @@ class _AsyncContext(object):
         with self._lock:
             self._delete.append(obj._tkkey)
 
-    def refresh(self):
+    def refresh(self, block=True):
         """
         Forces a refresh of the graphics state.
 
-        This method is unused for the asynchronous context, and exists only for
-        compatibility reasons.
+        This method is simply checks for liveness in the the asynchronous context.
+        
+        :param block: Whether to block after a refresh
+        :type block: ``bool``
         """
-        pass
+        if not self._bkgd:
+            raise RuntimeError('Turtle context is no longer active')
 
     def dispose(self):
         """
@@ -216,9 +220,10 @@ class _AsyncContext(object):
             self._window.clear()
             self._create.clear()
             self._delete.clear()
-            self._bkgd.dispose()
-            self._bkgd = None
             self._root = None
+            if self._bkgd:
+                self._bkgd.dispose()
+                self._bkgd = None
 
     def isasync(self):
         """
@@ -228,6 +233,9 @@ class _AsyncContext(object):
         return True
 
     def _tk_update(self):
+        """
+        Performs the primary update for the asynchronous thread
+        """
         with self._lock:
             for key in self._window:
                 self._window[key]._tk_update()
@@ -427,16 +435,20 @@ class _SyncContext(object):
         except:
             pass
 
-    def refresh(self):
+    def refresh(self, block=True):
         """
-        Forces a refresh of the graphics state.
-
-        This method is unused for the asynchronous context, and exists only for
-        compatibility reasons.
+        Forces a refresh of the graphics state. 
+        
+        In the synchronous context, a refresh may either be blocking or non-blocking.
+        A blocking refresh updates the global TK subsytem. 
+        
+        :param block: Whether to block after a refresh
+        :type block: ``bool``
         """
         for key in self._window:
             self._window[key]._tk_update()
-        self._root.update()
+        if block:
+            self._root.update()
 
     def dispose(self):
         """

@@ -1,8 +1,8 @@
 """
 Classes for three different color models.
 
-The classes are RGB, CMYK, HSV, representing the most popular color models. In addition,
-we support string parsing for the TKinter color space.
+The classes are RGB, CMYK, HSV, and HSL representing the most popular color models. In 
+addition, we support string parsing for the TKinter color space.
 
 :author:  Walker M. White (wmw2)
 :version: July 13, 2018
@@ -640,7 +640,7 @@ class HSL(object):
         
         :param other: The object to check
         """
-        return (type(other) == HSV and self.hue == other.hue and 
+        return (type(other) == HSL and self.hue == other.hue and 
                 self.saturation == other.saturation and self.lightness == other.lightness)
     
     def __ne__(self, other):
@@ -650,7 +650,7 @@ class HSL(object):
         
         :param other: The object to check
         """
-        return (type(other) != HSV or self.hue != other.hue or 
+        return (type(other) != HSL or self.hue != other.hue or 
                 self.saturation != other.saturation or self.lightness != other.lightness)
     
     def __str__(self):
