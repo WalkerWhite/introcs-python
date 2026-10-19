@@ -239,11 +239,12 @@ class Turtle(_DrawTool):
         """
         The dash pattern of this turtle.
 
-        A dash pattern is a tuple of integers that specifes the dash in pixels.  Only
-        odd values of the pattern are drawn.  For example, if the pattern is (10,10),
-        the turtle will draw 10 pixels, and then stop drawing for 10 pixels.  After 20
-        pixels that patterns repeat.  Similarly (10,5,5,10) will draw for 10 pixels,
-        stop for 5 pixels, draw for 10 pixels and the stop for 5 pixels before repeating.
+        A dash pattern is a tuple of integers that specifes the dash in pixels.  
+        Only odd values of the pattern are drawn. For example, if the pattern 
+        is (10,10), the turtle will draw 10 pixels, and then stop drawing for 
+        10 pixels. After 20 pixels that patterns repeat.  Similarly (10,5,5,10) 
+        will draw for 10 pixels, stop for 5 pixels, draw for 10 pixels and then
+        stop for 5 pixels before repeating.
 
         If this value is ``None``, the line will be solid.
 

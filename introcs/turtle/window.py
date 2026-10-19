@@ -224,10 +224,10 @@ class Window(object):
     def speed(self):
         """
         The speed of the last drawing tool to draw to this Window.
-
+        
         This value is none if the Window has never been draw on. This attribute is a hook
         for autograders.
-
+        
         *This attribute may not be altered directly*
         """
         return self._lastspeed
@@ -236,10 +236,10 @@ class Window(object):
     def visibility(self):
         """
         The visibility of the last drawing tool to draw to this Window.
-
+        
         This value is none if the Window has never been draw on. This attribute is a hook
         for autograders.
-
+        
         *This attribute may not be altered directly*
         """
         return self._lastvisib
@@ -250,23 +250,12 @@ class Window(object):
     def scale(self):
         """
         The amount to scale the window, when put to page
-
+        
         This attribute is ignored in the TKinter version of the Turtle.
-
-        **invariant**: scale must be a float > 0"""
+        
+        **invariant**: scale must be a float > 0
+        """
         return 1
-
-    @property
-    def scale(self):
-        """
-        Whether Window has been used since last marking
-
-        This attribute is ignored in the TKinter version of the Turtle.
-
-        **invariant**: Value is a ``bool``
-        """
-        raise NotImplementedError('mark is not implemented in the Tkinter version')
-
 
     # BUILT-IN METHODS
     def __init__(self, x=50, y=50, width=700, height=700, scale=1):
@@ -722,7 +711,7 @@ class Window(object):
         convs = []
         for x in range(0,len(coords),2):
             convs.extend(self._convert_coords(coords[x],coords[x+1]))
-        self._queue_command(tool._tkkey,icon,convs[-2:],self._canvas.create_line,convs,kw)
+        self._queue_command(tool._tkkey,icon,convs[-2:],self._tk_internal_create_line,convs,kw)
 
     def _draw_arc(self,tool,icon,left,bottom,right,top,**kw):
         """
@@ -784,7 +773,7 @@ class Window(object):
             angle  = math.pi*angle/180.0
             x = math.cos(angle)*radius[0]+center[0]
             y = math.sin(angle)*radius[1]+center[1]
-        self._queue_command(tool._tkkey,icon,(x,y),self._canvas.create_arc,[left,top,right,bottom],kw)
+        self._queue_command(tool._tkkey,icon,(x,y),self._tk_internal_create_arc,[left,top,right,bottom],kw)
 
     def _draw_oval(self,tool,icon,left,bottom,right,top,**kw):
         """
@@ -834,7 +823,7 @@ class Window(object):
         left, bottom = self._convert_coords(left,bottom)
         right,top = self._convert_coords(right,top)
         center = ((left+right)/2.0,(top+bottom)/2.0)
-        self._queue_command(tool._tkkey,icon,center,self._canvas.create_oval,[left,top,right,bottom],kw)
+        self._queue_command(tool._tkkey,icon,center,self._tk_internal_create_oval,[left,top,right,bottom],kw)
 
     def _draw_rectangle(self,tool,icon,left,bottom,right,top,**kw):
         """
@@ -883,7 +872,7 @@ class Window(object):
 
         left, bottom = self._convert_coords(left,bottom)
         right,top = self._convert_coords(right,top)
-        self._queue_command(tool._tkkey,icon,(left,bottom),self._canvas.create_rectangle,[left,top,right,bottom],kw)
+        self._queue_command(tool._tkkey,icon,(left,bottom),self._tk_internal_create_rectangle,[left,top,right,bottom],kw)
 
     def _draw_polygon(self,tool,icon,coords,**kw):
         """
@@ -925,7 +914,7 @@ class Window(object):
         convs = []
         for x in range(0,len(coords),2):
             convs.extend(self._convert_coords(coords[x],coords[x+1]))
-        self._queue_command(tool._tkkey,icon,convs[:2],self._canvas.create_polygon,convs,kw)
+        self._queue_command(tool._tkkey,icon,convs[:2],self._tk_internal_create_polygon,convs,kw)
 
 
     # TK Entry Points
@@ -1004,6 +993,57 @@ class Window(object):
 
 
     # Internal TK Helpers
+    def _tk_internal_create_line(self,*coords,**kw):
+        return self._tk_internal_create_shape('line',coords,kw)
+
+    def _tk_internal_create_arc(self,*coords,**kw):
+        return self._tk_internal_create_shape('arc',coords,kw)
+
+    def _tk_internal_create_oval(self,*coords,**kw):
+        return self._tk_internal_create_shape('oval',coords,kw)
+
+    def _tk_internal_create_rectangle(self,*coords,**kw):
+        return self._tk_internal_create_shape('rectangle',coords,kw)
+
+    def _tk_internal_create_polygon(self,*coords,**kw):
+        return self._tk_internal_create_shape('polygon',coords,kw)
+
+    def _tk_internal_create_shape(self,kind,coords,kw):
+        """Render one logical item; a group tag keeps rollback atomic on Windows."""
+        create = getattr(self._canvas,'create_'+kind)
+        if not kw.get('dash') or self._canvas.tk.call('tk','windowingsystem') != 'win32':
+            return create(*coords,**kw)
+
+        from ._dash import dash_runs, shape_path
+        import uuid
+        options = dict(kw)
+        pattern = tuple(options.pop('dash'))
+        offset = options.pop('dashoffset',0)
+        tag = 'introcs_dash_'+uuid.uuid4().hex
+        tags = options.pop('tags',())
+        if isinstance(tags,str):
+            tags = (tags,)
+        tags = tuple(tags)+(tag,)
+        path = shape_path(kind,coords,options)
+        color = options.get('fill','black') if kind == 'line' else options.get('outline','black')
+        try:
+            # Keep native fills beneath the emulated outline, in the same history entry.
+            if kind != 'line' and options.get('fill') and not (kind == 'arc' and options.get('style','pieslice') == 'arc'):
+                fill_options = dict(options,outline='',tags=tags)
+                create(*coords,**fill_options)
+            if color and options.get('width',1) != 0:
+                line_options = {'fill':color,'width':options.get('width',1),
+                                'capstyle':'butt','tags':tags}
+                for name in ('joinstyle','state','stipple'):
+                    if name in options:
+                        line_options[name] = options[name]
+                for run in dash_runs(path,pattern,offset):
+                    self._canvas.create_line(*run,**line_options)
+        except Exception:
+            self._canvas.delete(tag)
+            raise
+        return tag
+
     def _tk_internal_execute(self,cmd):
         """
         Executes a drawing command.

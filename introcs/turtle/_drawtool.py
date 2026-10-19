@@ -259,7 +259,7 @@ class _DrawTool(object):
         :rtype:  ``bool``
         """
         from .. import colors
-        if type(c) in [colors.RGB, colors.HSV]:
+        if type(c) in [colors.RGB, colors.HSV, colors.HSL]:
             return True
         elif type(c) == str:
             return colors.is_tkcolor(c) or colors.is_webcolor(c)
@@ -280,7 +280,7 @@ class _DrawTool(object):
         :rtype:  ``str``
         """
         from .. import colors
-        return c.webColor() if type(c) in [colors.RGB, colors.HSV] else c if c[0] == '#' else colors.tk_webcolor(c)
+        return c.webColor() if type(c) in [colors.RGB, colors.HSV, colors.HSL] else c if c[0] == '#' else colors.tk_webcolor(c)
 
 
     # MUTABLE PROPERTIES

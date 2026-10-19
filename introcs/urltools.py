@@ -30,7 +30,7 @@ def urlread(url):
     header  = connect.info()
     payload = connect.read()
     try:
-        return payload.decode('utf8') # Yeah, no way that was going in A1
+        result = payload.decode('unicode_escape') # Yeah, no way that was going in A1
     except:
         # We need to find out what the encoding is
         encoding = ''
@@ -39,13 +39,16 @@ def urlread(url):
                 encoding = item[1]
                 position = encoding.find('charset=')
                 encoding = encoding[position+8:]
+                encoding = encoding.strip()
     
+    if encoding == 'utf-8':
+        return payload.decode('utf-8')
     if encoding in ['ISO-8859-1','ansi']:
         return payload.decode('latin1')
     elif encoding == 'ascii':
         return payload.decode('ascii')
     else:
-        return data.decode('unicode_escape')
+        return payload.decode(encoding)
 
 
 def urlinfo(url):

@@ -1,9 +1,9 @@
 """
 Unit test functions for Python
 
-This module provides function-level unit testing tools.  It is a replacement for the 
-built-in Python package unittest, which is much less user friendly and requires an 
-understanding of OO programming. 
+This module provides function-level unit testing tools. It is a replacement for 
+the built-in Python package unittest, which is much less user friendly and 
+requires an understanding of OO programming. 
 
 The assert functions in this module are different from standard assert statements.
 They stop execution of Python and report the location of the error.
@@ -71,18 +71,20 @@ def allclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
     """
     Returns True if two sequences are element-wise equal within a tolerance.
     
-    The values a and b are expected to be sequences, though they can be nested sequences
-    so long as the base elements are numbers (int or float).  For example, ((1,2), (3,4))
-    is an acceptable value but ((1,2),('a',3)) is not.  In addition, the inputs are 
-    expected to have the same 'shape' (same length overall and for any nested elements).
+    The values a and b are expected to be sequences, though they can be nested 
+    sequences so long as the base elements are numbers (int or float). For 
+    example, ((1,2), (3,4)) is an acceptable value but ((1,2),('a',3)) is not.
+    In addition, the inputs are expected to have the same 'shape' (same length 
+    overall and for any nested elements).
     
-    The tolerance values are positive, and are typically very small numbers. The relative 
-    difference (`rtol` * abs(`b`)) and the absolute difference `atol` are added together 
-    to compare against the absolute difference between `a` and `b`.
+    The tolerance values are positive, and are typically very small numbers. 
+    The relative difference (`rtol` * abs(`b`)) and the absolute difference 
+    `atol` are added together to compare against the absolute difference 
+    between `a` and `b`.
     
-    If either sequences contains one or more NaNs, False is returned (unless equal_nan
-    is True). Infs are treated as equal if they are in the same place and of the same 
-    sign in both sequences.
+    If either sequences contains one or more NaNs, False is returned (unless 
+    equal_nan is True). Infs are treated as equal if they are in the same place 
+    and of the same sign in both sequences.
     
     This is a safe replacement for the numpy version.
     
@@ -137,18 +139,18 @@ def isclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
     """
     Returns a boolean or sequence comparing to inputs element-wise within a tolerance.
     
-    The values a and b can either be numbers (``int`` or ``float``) or a sequence.  If
-    they are numbers, this function returns a boolean.
+    The values a and b can either be numbers (``int`` or ``float``) or a 
+    sequence. If they are numbers, this function returns a boolean.
     
-    If they are sequences, they can be nested, but their base elements must be numbers 
-    (int or float).  For example, ((1,2), (3,4))is an acceptable value but ((1,2),('a',3)) 
-    is not. In addition, the inputs are expected to have the same 'shape' (same length 
-    overall and for any nested elements). The value returned will be a sequence of 
-    booleans of the same shape as the inputs.
+    If they are sequences, they can be nested, but their base elements must be 
+    numbers (int or float). For example, ((1,2), (3,4))is an acceptable value 
+    but ((1,2),('a',3)) is not. In addition, the inputs are expected to have the 
+    same 'shape' (same length overall and for any nested elements). The value 
+    returned will be a sequence of booleans of the same shape as the inputs.
     
-    The tolerance values are positive, typically very small numbers.  The relative 
-    difference (`rtol` * abs(`b`)) and the absolute difference `atol` are added together 
-    to compare against the absolute difference between `a` and `b`.
+    The tolerance values are positive, typically very small numbers. The relative 
+    difference (`rtol` * abs(`b`)) and the absolute difference `atol` are added 
+    together to compare against the absolute difference between `a` and `b`.
     
     This is a safe replacement for the numpy version.
     
@@ -208,8 +210,9 @@ def _close_descent(a, b, rtol, atol, equal_nan, flatten=True):
     Returns a boolean or sequence comparing to inputs element-wise within a tolerance.
     
     This is a recursive function intended to implement `allclose` and `isclose`
-    Which one it implements depends on the value of `flatten`.  If `flatten` is True,
-    it returns a boolean.  Otherwise it returns a value of the same shape as the inputs.
+    Which one it implements depends on the value of `flatten`. If `flatten` is 
+    True, it returns a boolean. Otherwise it returns a value of the same shape 
+    as the inputs.
     
     This method uses coded exceptions to abort if the inputs are invalid.
     
@@ -284,9 +287,10 @@ def quit_with_error(msg):
     """
     Quits Python with an error msg
     
-    When testing, this is preferable to raising an error in Python. Once you have a lot 
-    of helper functions, it becomes a lot of work just to figure out what is going on in 
-    the error message. This makes the error clear and concise
+    When testing, this is preferable to raising an error in Python. Once you 
+    have a lot of helper functions, it becomes a lot of work just to figure out 
+    what is going on in the error message. This makes the error clear and 
+    concise
     
     :param msg: The error message
     :type msg:  ``str``
@@ -308,12 +312,13 @@ def assert_equals(expected,received,message=None):
     """
     Quits if ``expected`` and ``received`` differ.
     
-    The meaning of "differ" for this function is !=.  As a result, this assert function 
-    is not necessarily reliable when expected and received are of type ``float``.  You 
-    should use the function :func:`assert_floats_equal` for that application.
+    The meaning of "differ" for this function is !=. As a result, this assert 
+    function is not necessarily reliable when expected and received are of type 
+    ``float``. You should use the function :func:`assert_floats_equal` for that 
+    application.
     
-    If there is no custom error message, this function will print some minimal debug
-    information. The following is an example debug message::
+    If there is no custom error message, this function will print some minimal 
+    debug information. The following is an example debug message::
         
         assert_equals: expected 'yes' but instead got 'no'
     
@@ -332,14 +337,15 @@ def assert_equals(expected,received,message=None):
 
 def assert_not_equals(expected,received,message=None):
     """
-    Quits if ``expected`` and ``received`` differ.
+    Quits if ``expected`` and ``received`` are the same.
     
-    The meaning of "differ" for this function is !=.  As a result, this assert function 
-    is not necessarily reliable when expected and received are of type ``float``.  You 
-    should use the function :func:`assert_floats_not_equal` for that application.
+    The meaning of "differ" for this function is !=. As a result, this assert 
+    function is not necessarily reliable when expected and received are of 
+    type ``float``. You should use the function :func:`assert_floats_not_equal` 
+    for that application.
     
-    If there is no custom error message, this function will print some minimal debug
-    information. The following is an example debug message::
+    If there is no custom error message, this function will print some minimal 
+    debug information. The following is an example debug message::
         
         assert_not_equals: expected something different from 'n' 
     
@@ -400,10 +406,11 @@ def assert_floats_equal(expected, received,message=None):
     """
     Quits if the floats ``expected`` and ``received`` differ.
     
-    This function takes two numbers and compares them using functions from the numerical 
-    package ``numpy``.  This is a scientific computing package that allows us to test if 
-    numbers are "close enough". Hence, unlike :func:`assert_equal`, the meaning of 
-    "differ" for  this function is defined by numpy.
+    This function takes two numbers and compares them using functions from the 
+    numerical package ``numpy``. This is a scientific computing package that 
+    allows us to test if numbers are "close enough". Hence, unlike 
+    :func:`assert_equal`, the meaning of "differ" for  this function is defined 
+    by numpy.
     
     If there is no custom error message, this function will print some minimal debug
     information. The following is an example debug message::
@@ -447,20 +454,21 @@ def assert_floats_not_equal(expected, received,message=None):
     """
     Quits if floats ``expected`` and ``received`` are the same.
     
-    This function takes two numbers and compares them using functions from the numerical 
-    package ``numpy``.  This is a scientific computing package that allows us to test if 
-    numbers are "close enough".  Hence, unlike :func:`assert_not_equal`, the meaning of 
-    "same" for  this function is defined by numpy.
+    This function takes two numbers and compares them using functions from the 
+    numerical package ``numpy``. This is a scientific computing package that 
+    allows us to test if numbers are "close enough". Hence, unlike 
+    :func:`assert_not_equal`, the meaning of "same" for  this function is 
+    defined by numpy.
     
-    If there is no custom error message, this function will print some minimal debug
-    information. The following is an example debug message::
+    If there is no custom error message, this function will print some minimal 
+    debug information. The following is an example debug message::
         
         assert_floats_not_equal: expected something different from 0.1 
     
     **IMPORTANT**: 
-    The arguments expected and received should each numbers (either floats or ints). If 
-    either argument is not a number, the function quits with a different error message. 
-    For example::
+    The arguments expected and received should each numbers (either floats or 
+    ints). If either argument is not a number, the function quits with a 
+    different error message. For example::
         
          assert_floats_not_equal: first argument 'alas' is not a number
     
@@ -515,23 +523,24 @@ def assert_float_lists_equal(expected, received,message=None):
     """
     Quits if the lists (or tuples) of floats ``expected`` and ``received`` differ
     
-    This function takes two numbers and compares them using functions from the numerical 
-    package ``numpy``.  This is a scientific computing package that allows us to test if 
-    numbers are "close enough".  Hence, unlike :func:`assert_equal`, the meaning of 
-    "differ" for  this function is defined by numpy.
+    This function takes two numbers and compares them using functions from the 
+    numerical package ``numpy``. This is a scientific computing package that 
+    allows us to test if numbers are "close enough". Hence, unlike 
+    :func:`assert_equal`, the meaning of "differ" for  this function is defined 
+    by numpy.
     
-    This function is similar to :func:`assert_floats_equal`. The difference is that it 
-    works on lists of floats.  These lists can be multidimensional.  To illustrate this, 
-    the following is an example debug message::
+    This function is similar to :func:`assert_floats_equal`. The difference is 
+    that it works on lists of floats. These lists can be multidimensional. 
+    To illustrate this, the following is an example debug message::
         
         assert_float_lists__equal: expected [[1,2],[3,4]] but instead got [[1,2],[3,5]]
     
     If there is a custom error message, that will be used instead.
     
     **IMPORTANT**: 
-    The arguments expected and received should each lists of numbers. Furthemore, they 
-    must have EXACTLY the same dimension.  If not this function quits with a different 
-    error message.  For example::
+    The arguments expected and received should each lists of numbers. Furthemore, 
+    they must have EXACTLY the same dimension. If not this function quits with 
+    a different error message. For example::
        
         assert_float_lists_equal: first argument 'alas' is not a sequence
     
@@ -590,20 +599,21 @@ def assert_float_lists_not_equal(expected, received,message=None):
     """
     Quits if the lists (or tuples) of floats ``expected`` and ``received`` are the same
     
-    This function takes two numbers and compares them using functions from the numerical 
-    package ``numpy``.  This is a scientific computing package that allows us to test if 
-    numbers are "close enough".  Hence, unlike :func:`assert_not_equal`, the meaning of 
-    "same" for  this function is defined by numpy.
+    This function takes two numbers and compares them using functions from the 
+    numerical package ``numpy``. This is a scientific computing package that 
+    allows us to test if numbers are "close enough". Hence, unlike 
+    :func:`assert_not_equal`, the meaning of "same" for  this function is 
+    defined by numpy.
     
-    This function is similar to :func:`assert_floats_not_equal`. The difference is that it 
-    works on lists of floats.  These lists can be multidimensional.  To illustrate this, 
-    the following is an example debug message::
+    This function is similar to :func:`assert_floats_not_equal`. The difference 
+    is that it works on lists of floats. These lists can be multidimensional. 
+    To illustrate this, the following is an example debug message::
         
         assert_float_lists_not_equal: expected something different from [[1,2],[3,4]] 
     
     **IMPORTANT**: 
-    The arguments expected and received should each be sequences of numbers. If not this
-    function quits with a different error message.  For example::
+    The arguments expected and received should each be sequences of numbers. If 
+    not this function quits with a different error message. For example::
            
         assert_float_lists_not_equal: first argument 'alas' is not a list
     
@@ -611,8 +621,8 @@ def assert_float_lists_not_equal(expected, received,message=None):
         
         assert_float_lists_not_equal: first argument (1, 'a') has non-numeric values
     
-    It is not a problem if the sequences have different dimensions as long as they are
-    numeric. In that case, the function will not quit with an error. 
+    It is not a problem if the sequences have different dimensions as long as 
+    they are numeric. In that case, the function will not quit with an error. 
     
     If there is a custom error message, that will be used instead.
     
@@ -665,21 +675,21 @@ def assert_float_lists_not_equal(expected, received,message=None):
 
 def assert_error(func,*args,error=AssertionError,reason=None,message=None):
     """
-    Quits if call func(\*args) does not crash with the given error.
+    Quits if call ``func(*args)`` does not crash with the given error.
     
-    This function calls func(\*args) and checks whether it crashes with the given error 
-    (AssertionError by default).  If the call does not crash, or crashes with a different 
-    error, this function will quit with an error message.
+    This function calls ``func(*args)`` and checks whether it crashes with the 
+    given error (AssertionError by default). If the call does not crash, or 
+    crashes with a different error, this function will quit with an error message.
     
-    The optional argument reason checks against the ``args`` attribute of the error 
-    (i.e. the error reason), provided that it is not None. If reason is a tuple, it 
-    will compare the value to args using ==.  Otherwise, if it is any type other than 
-    None, it will compare against the first element of ``args``.
+    The optional argument reason checks against the ``args`` attribute of the 
+    error (i.e. the error reason), provided that it is not None. If reason is a 
+    tuple, it will compare the value to args using ==. Otherwise, if it is any 
+    type other than None, it will compare against the first element of ``args``.
     
     The optional argument message is for the error message to print should this 
-    function fail (i.e. it is not the error "message" of the error being tested). If 
-    there is no custom error message, this function will print some minimal debug
-    information. The following is an example debug message::
+    function fail (i.e. it is not the error "message" of the error being tested). 
+    If there is no custom error message, this function will print some minimal 
+    debug information. The following is an example debug message::
         
         assert_error: call foo(1) did not crash but instead returned 42
     

@@ -26,6 +26,7 @@ Attributes
 ----------
 .. autoattribute:: Point3.x
 .. autoattribute:: Point3.y
+.. autoattribute:: Point3.z
 
 Immutable Methods
 -----------------

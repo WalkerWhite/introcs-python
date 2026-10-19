@@ -243,11 +243,11 @@ def write_csv(data,filename):
     
     To be a proper CSV file, it must be a 2-dimensional list with the first row 
     containing only strings.  All other rows may be any python value.  Dates are
-    converted using isoformatting.  All other objects are converted to their string
-    representation.
+    converted using isoformatting.  All other objects are converted to their 
+    string representation.
     
-    The CSV filename must either have no extension, or the extension .csv.  Any other
-    extension will cause an error.
+    The CSV filename must either have no extension, or the extension .csv.  Any 
+    other extension will cause an error.
     
     :param data: The Python value to encode as a CSV file
     :type data:  2d ``list``
@@ -290,7 +290,8 @@ def _check_csv(data):
     """
     Returns a string representing an error message if data is malformed [INTERNAL FUNCTION]
     
-    If the data is a properly formed CSV value, this function returns the empty string.
+    If the data is a properly formed CSV value, this function returns the empty 
+    string.
     
     Parameter data: The Python value to encode as a CSV file
     Precondition: None
